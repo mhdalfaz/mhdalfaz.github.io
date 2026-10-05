@@ -34,8 +34,14 @@ jobs:
       # `npm run data:sync`. This step fetches the live sheet, so it can also
       # catch a Sheet that is unreachable or unpublished — which is why it must
       # not block the deploy. The committed snapshot is the real fallback.
+      #
+      # The run string is a block scalar: a bare `|| echo "::warning::..."` on
+      # one line makes GitHub's YAML parser choke on the `::`.
       - name: Check data snapshot is current
-        run: npm run data:sync:check || echo "::warning::Snapshot is stale or the sheet is unreachable. Run: npm run data:sync"
+        run: |
+          if ! npm run data:sync:check; then
+            echo "::warning title=Stale data snapshot::The committed snapshot does not match the Google Sheet, or the sheet is unreachable. Run: npm run data:sync"
+          fi
 
       - name: Type check
         run: npm run check
