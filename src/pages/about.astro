@@ -14,11 +14,11 @@ const stats = [
   { label: 'Projects', value: String(projects.length) },
   { label: 'Domains served', value: domains.length > 0 ? String(domains.length) : '4' },
   { label: 'Technologies', value: String(new Set(projects.flatMap((p) => p.tools)).size) },
-  { label: 'Years shipping', value: years.length > 0 ? String(Math.max(...years) - Math.min(...years) + 1) : '—' },
+  { label: 'Years shipping', value: years.length > 0 ? String(Math.max(...years) - Math.min(...years) + 1) : 'n/a' },
 ];
 ---
 
-<BaseLayout title={`About — ${profile.name}`} description={profile.bio}>
+<BaseLayout title={`About | ${profile.name}`} description={profile.bio}>
   <section class="section shell">
     <header class="page-head" data-reveal>
       <p class="eyebrow">About</p>
@@ -57,7 +57,7 @@ const stats = [
 
         <h2>How I work</h2>
         <p>
-          I like understanding the whole path a request takes — from the route,
+          I like understanding the whole path a request takes: from the route,
           through validation and authorization, into the database, and back out as
           something a user can act on. Understanding the layers is what lets me
           make architecture calls instead of guessing.

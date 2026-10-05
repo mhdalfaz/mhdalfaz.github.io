@@ -49,7 +49,7 @@ const paragraphs = project.description
 ---
 
 <BaseLayout
-  title={`${project.name} — Muhammad Alfaz`}
+  title={`${project.name} | Muhammad Alfaz`}
   description={project.tagline ?? project.name}
 >
   <article class="project">
@@ -171,7 +171,7 @@ const paragraphs = project.description
         {
           paragraphs.length > 0 && (
             <section class="block" data-reveal aria-labelledby="overview-heading">
-              <p class="eyebrow">01 — Overview</p>
+              <p class="eyebrow">01 / Overview</p>
               <h2 class="block__title" id="overview-heading">What it is</h2>
               <div class="prose">
                 {paragraphs.map((paragraph) => (
@@ -185,7 +185,7 @@ const paragraphs = project.description
         {
           project.keyFeatures.length > 0 && (
             <section class="block" data-reveal aria-labelledby="features-heading">
-              <p class="eyebrow">02 — Capabilities</p>
+              <p class="eyebrow">02 / Capabilities</p>
               <h2 class="block__title" id="features-heading">Key features</h2>
               <ul class="check-list">
                 {project.keyFeatures.map((feature) => (
@@ -210,7 +210,7 @@ const paragraphs = project.description
         {
           project.architecture && (
             <section class="block" data-reveal aria-labelledby="architecture-heading">
-              <p class="eyebrow">03 — Architecture</p>
+              <p class="eyebrow">03 / Architecture</p>
               <h2 class="block__title" id="architecture-heading">How it's built</h2>
               <div class="prose">
                 {project.architecture
@@ -236,7 +236,7 @@ const paragraphs = project.description
         {
           project.challenges.length > 0 && (
             <section class="block" data-reveal aria-labelledby="challenges-heading">
-              <p class="eyebrow">04 — Engineering</p>
+              <p class="eyebrow">04 / Engineering</p>
               <h2 class="block__title" id="challenges-heading">Challenges &amp; solutions</h2>
               <ol class="challenge-list">
                 {project.challenges.map((challenge, index) => (
@@ -253,7 +253,7 @@ const paragraphs = project.description
         {
           project.demoCredentials && (
             <section class="block" data-reveal aria-labelledby="demo-heading">
-              <p class="eyebrow">05 — Try it</p>
+              <p class="eyebrow">05 / Try it</p>
               <h2 class="block__title" id="demo-heading">Demo credentials</h2>
               <pre class="demo"><code>{project.demoCredentials}</code></pre>
             </section>
@@ -304,7 +304,7 @@ const paragraphs = project.description
       deepSections < 4 && (
         <section class="shell">
           <p class="todo-note">
-            This write-up is still being filled in — the sheet has
+            This write-up is still being filled in: the sheet has
             {' '}
             {4 - deepSections} of the deep-dive fields missing. Want the full version?
             {' '}
@@ -555,7 +555,7 @@ const paragraphs = project.description
     list-style: none;
     padding: var(--space-4) var(--space-5);
     border-inline-start: 2px solid var(--grey-30);
-    background-color: var(--grey-04);
+    background-color: var(--surface-card);
     border-radius: 0 var(--radius) var(--radius) 0;
   }
 
@@ -579,7 +579,7 @@ const paragraphs = project.description
     padding: var(--space-4);
     border: var(--border-hairline);
     border-radius: var(--radius);
-    background-color: var(--grey-04);
+    background-color: var(--surface-card);
     transition: border-color var(--duration-base) var(--ease-out);
   }
 
@@ -665,7 +665,7 @@ const paragraphs = project.description
     padding: var(--space-4) var(--space-5);
     border: var(--border-hairline);
     border-radius: var(--radius);
-    background-color: var(--grey-04);
+    background-color: var(--surface-card);
     font-size: var(--text-sm);
     color: var(--grey-70);
   }
@@ -698,7 +698,7 @@ const paragraphs = project.description
 
   .pager__link:hover {
     border-color: var(--grey-30);
-    background-color: var(--grey-04);
+    background-color: var(--surface-subtle);
   }
 
   .pager__link--next {

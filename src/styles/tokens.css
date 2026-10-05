@@ -1,5 +1,5 @@
 /*
- * Design tokens — strictly monochrome.
+ * Design tokens: strictly monochrome.
  *
  * Every colour in this file is black, white, or a mix of the two. Depth comes
  * from alpha and hairline borders instead of hue, which is what keeps the
@@ -24,6 +24,16 @@
 
   --paper: #ffffff;
   --paper-dim: rgb(255 255 255 / 0.62);
+
+  /*
+   * Opaque surface fills for anything that sits over the page: cards, panels,
+   * pills, inputs. These are deliberately solid rather than alpha-derived. The
+   * neuron canvas is fixed behind the whole page, and a translucent card lets
+   * moving white lines drift underneath the text sitting on it.
+   */
+  --surface-card: #0a0a0a;
+  --surface-card-hover: #141414;
+  --surface-subtle: #171717;
 
   /* --- type ----------------------------------------------------------- */
   --font-display: 'Inter Tight', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -91,6 +101,10 @@
   --grey-15: rgb(0 0 0 / 0.15);
   --grey-08: rgb(0 0 0 / 0.08);
   --grey-04: rgb(0 0 0 / 0.04);
+  /* Opaque equivalents of the surface greys above, for inverted sections. */
+  --surface-card: #f2f2f2;
+  --surface-card-hover: #e4e4e4;
+  --surface-subtle: #ebebeb;
   color: #ffffff;
   background-color: #ffffff;
 }

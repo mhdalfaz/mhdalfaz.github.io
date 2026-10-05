@@ -22,8 +22,15 @@ function isActive(href: string): boolean {
 
 <header class="site-header" data-header>
   <div class="shell site-header__inner">
-    <a class="brand" href="/" aria-label="Muhammad Alfaz — home">
-      <span class="brand__mark" aria-hidden="true">A</span>
+    <a class="brand" href="/" aria-label="Muhammad Alfaz, home">
+      <img
+        class="brand__mark"
+        src="/img/alfaz-logo.png"
+        alt=""
+        width="128"
+        height="128"
+        decoding="async"
+      />
       <span class="brand__name">Muhammad Alfaz</span>
     </a>
 
@@ -100,22 +107,25 @@ function isActive(href: string): boolean {
     letter-spacing: -0.01em;
   }
 
+  /*
+   * The v2 monogram, redrawn as a black tile with a white "MA". It is opaque so
+   * the neuron canvas cannot show through it, and the corners are rounded to
+   * match the rest of the geometry.
+   */
   .brand__mark {
-    display: grid;
-    place-items: center;
     inline-size: 34px;
     block-size: 34px;
-    border: 1px solid var(--grey-30);
     border-radius: var(--radius-sm);
-    font-size: var(--text-sm);
-    transition:
-      background-color var(--duration-base) var(--ease-out),
-      color var(--duration-base) var(--ease-out);
+    transition: filter var(--duration-base) var(--ease-out);
   }
 
-  .brand:hover .brand__mark {
-    background-color: var(--paper);
-    color: var(--ink);
+  /*
+   * Inverting the tile flips it from black-on-black to white with a black glyph,
+   * which is the monochrome equivalent of the button wipe used elsewhere.
+   */
+  .brand:hover .brand__mark,
+  .brand:focus-visible .brand__mark {
+    filter: invert(1);
   }
 
   .brand__name {

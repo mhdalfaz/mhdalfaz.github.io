@@ -256,7 +256,7 @@ h4 {
   padding: 0.25em 0.7em;
   border: var(--border-hairline);
   border-radius: var(--radius-full);
-  background-color: var(--grey-04);
+  background-color: var(--surface-subtle);
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   color: var(--grey-70);
@@ -282,8 +282,9 @@ h4 {
   position: relative;
   border: var(--border-hairline);
   border-radius: var(--radius);
-  background-color: var(--grey-04);
-  backdrop-filter: blur(6px);
+  /* Opaque on purpose: no backdrop blur, so nothing from the neuron canvas
+     shows through a panel and drifts under the content. */
+  background-color: var(--surface-card);
 }
 
 /* Hairline top edge that catches light, giving panels definition without a fill. */

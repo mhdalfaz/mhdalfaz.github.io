@@ -20,7 +20,7 @@ const openSource = projects.filter((project) => project.visibility === 'public')
 ---
 
 <BaseLayout
-  title={`${profile.name} — ${profile.role}`}
+  title={`${profile.name} | ${profile.role}`}
   description={profile.bio}
 >
   <!-- Hero -->
@@ -178,7 +178,7 @@ const openSource = projects.filter((project) => project.visibility === 'public')
     block-size: 6px;
     border-radius: var(--radius-full);
     background-color: var(--paper);
-    /* Slow pulse — the only looping animation on the page. */
+    /* Slow pulse: the only looping animation on the page. */
     animation: pulse 2.6s var(--ease-in-out) infinite;
   }
 

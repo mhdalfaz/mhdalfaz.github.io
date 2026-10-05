@@ -17,7 +17,7 @@ Google Sheet  ──gviz fetch──►  projects-loader.ts  ──►  content 
 
 ## The sheet
 
-Existing sheet (v2 columns A–J):
+Existing sheet (v2 columns A-J):
 
 | Column | Header | Required | Notes |
 | --- | --- | --- | --- |
@@ -32,13 +32,13 @@ Existing sheet (v2 columns A–J):
 | I | Android Download | no | |
 | J | IOS Download | no | |
 
-New v3 columns (K–Y). Every one is **optional** — the site builds and ships
+New v3 columns (K-Y). Every one is **optional**, so the site builds and ships
 today without them, and each section of the project page fills in as you add
 data.
 
 | Column | Header | Type | Renders as |
 | --- | --- | --- | --- |
-| K | Slug | text | URL segment. Auto-generated from Name if blank. **Set this explicitly** — it keeps URLs stable when you rename a project. |
+| K | Slug | text | URL segment. Auto-generated from Name if blank. **Set this explicitly**: it keeps URLs stable when you rename a project. |
 | L | Tagline | text | One line on cards and under the title. Falls back to the first line of Description. |
 | M | Domain | text | Creates a filter chip on /projects automatically. e.g. Healthcare, Government, Education. |
 | N | Year | number | Badge. Accepts `2024` or `2024-2025`. |
@@ -73,16 +73,16 @@ semicolon as the separator (both are accepted).
 
 ## Adding a column
 
-1. Add the header to the sheet. **Header text must match exactly** — the reader
-   keys off labels, not column positions, so column order does not matter but
-   spelling does.
+1. Add the header to the sheet. **Header text must match exactly**, because the
+   reader keys off labels, not column positions, so column order does not matter
+   but spelling does.
 2. Add the field to `projectSchema` in `src/lib/project-schema.ts`.
 3. Map it in `mapRecord` in `src/lib/project-mapper.ts`.
 4. Render it in `src/pages/projects/[slug].astro`.
 5. Run `npm run data:sync` to refresh the snapshot.
 
 Because the reader keys off header labels, you can insert columns anywhere in
-the sheet without breaking anything — you cannot reorder values by accident.
+the sheet without breaking anything, because you cannot reorder values by accident.
 
 ## The snapshot
 
@@ -96,7 +96,7 @@ npm run data:sync:check    # exit 1 if the snapshot is stale (used in CI)
 ```
 
 Run `data:sync` after every sheet edit. If you forget, the site keeps serving
-the old snapshot — the build still succeeds, so nothing fails loudly. CI warns
+the old snapshot. The build still succeeds, so nothing fails loudly. CI warns
 you via the `data:sync:check` step.
 
 To build without touching the network at all:

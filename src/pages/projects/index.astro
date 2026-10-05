@@ -13,7 +13,7 @@ const domains = [...new Set(projects.map((p) => p.domain).filter(Boolean))].sort
 ---
 
 <BaseLayout
-  title="Projects — Muhammad Alfaz"
+  title="Projects | Muhammad Alfaz"
   description={`${projects.length} web projects: architecture breakdowns, my role on each, and the stack behind them.`}
 >
   <section class="section shell">
@@ -270,7 +270,7 @@ const domains = [...new Set(projects.map((p) => p.domain).filter(Boolean))].sort
     padding: 0.6em 1em 0.6em 2.4em;
     border: var(--border-hairline);
     border-radius: var(--radius-full);
-    background-color: var(--grey-04);
+    background-color: var(--surface-subtle);
     font-size: var(--text-sm);
     transition:
       border-color var(--duration-fast) var(--ease-out),
@@ -283,7 +283,7 @@ const domains = [...new Set(projects.map((p) => p.domain).filter(Boolean))].sort
 
   .search__input:focus-visible {
     border-color: var(--grey-30);
-    background-color: var(--grey-08);
+    background-color: var(--surface-card);
     outline-offset: 0;
   }
 

@@ -38,7 +38,7 @@ const links = [
            * frame evenly, which is what the zoom-out needs.
            *
            * Start slightly scaled up (1.08) so there is headroom to zoom out to
-           * 1.0 — zooming out rather than in means the screenshot never crops
+           * 1.0. Zooming out rather than in means the screenshot never crops
            * differently between hover states.
            */
           <img class="card__img" src={project.image} alt="" loading="lazy" decoding="async" />
@@ -87,7 +87,7 @@ const links = [
             href={link.href}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label={`${project.name} — ${link.label}`}
+            aria-label={`${project.name}, ${link.label}`}
           >
             <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
               {link.icon === 'globe' && (
@@ -139,7 +139,9 @@ const links = [
     flex-direction: column;
     border: var(--border-hairline);
     border-radius: var(--radius);
-    background-color: var(--grey-04);
+    /* Solid, not translucent: the canvas is fixed behind the page, so an alpha
+       card would let the network drift under the text. */
+    background-color: var(--surface-card);
     overflow: hidden;
     transition:
       border-color var(--duration-base) var(--ease-out),
@@ -149,7 +151,7 @@ const links = [
 
   .card:hover {
     border-color: var(--grey-30);
-    background-color: var(--grey-08);
+    background-color: var(--surface-card-hover);
     transform: translateY(-3px);
   }
 
@@ -214,7 +216,7 @@ const links = [
       repeating-linear-gradient(
         135deg,
         transparent 0 10px,
-        var(--grey-04) 10px 11px
+        var(--surface-subtle) 10px 11px
       ),
       var(--ink-2);
   }
@@ -239,8 +241,8 @@ const links = [
   .badge {
     padding: 0.2em 0.6em;
     border-radius: var(--radius-full);
-    background-color: rgb(0 0 0 / 0.7);
-    backdrop-filter: blur(8px);
+    /* Opaque so the badge stays readable over any screenshot. */
+    background-color: var(--ink-1);
     font-family: var(--font-mono);
     font-size: 10px;
     letter-spacing: 0.08em;

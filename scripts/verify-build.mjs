@@ -130,7 +130,7 @@ for (const file of htmlFiles) {
   const html = await readFile(file, 'utf8');
   // A detail page with no facts sidebar means the schema mapping broke.
   if (!/facts__row/.test(html)) {
-    note(page, 'no facts sidebar rendered — check the project schema mapping');
+    note(page, 'no facts sidebar rendered, check the project schema mapping');
   }
 }
 

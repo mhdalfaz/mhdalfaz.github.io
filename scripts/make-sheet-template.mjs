@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Generates docs/sheet-template.csv — a ready-to-import Google Sheet template
+ * Generates docs/sheet-template.csv: a ready-to-import Google Sheet template
  * with the full v3 column set, one completely filled example row, and two
  * blank rows to copy.
  *

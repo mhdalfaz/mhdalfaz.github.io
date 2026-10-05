@@ -71,7 +71,7 @@ export function projectsLoader(options: ProjectsLoaderOptions = {}): Loader {
       if (withExamples) {
         logger.warn(
           'projects: EXAMPLE_CONTENT is on. Sample deep-dive copy is being used. ' +
-            'Never set this in CI — it will publish placeholder text.',
+            'Never set this in CI: it will publish placeholder text.',
         );
         projects = applyExampleContent(projects);
       }

@@ -28,7 +28,7 @@ const SAMPLES: Record<string, Partial<Project>> = {
     team: '2 backend developers, 1 designer',
     timeline: '3 months (2024)',
     architecture:
-      'A Laravel monolith with a Filament admin layer sitting on top of a service layer. PostgreSQL holds catalogue, members, and loan records in a single schema with foreign keys throughout, so referential integrity is enforced by the database rather than by application code.\n\nBorrowing rules — loan period, renew limit, and overdue blocking — live in a single domain service rather than being duplicated across controllers. That was the main architectural decision: the rules are the part most likely to change as the library adjusts policy, and keeping them in one place means there is one place to change and one place to test.',
+      'A Laravel monolith with a Filament admin layer sitting on top of a service layer. PostgreSQL holds catalogue, members, and loan records in a single schema with foreign keys throughout, so referential integrity is enforced by the database rather than by application code.\n\nBorrowing rules (loan period, renew limit, and overdue blocking) live in a single domain service rather than being duplicated across controllers. That was the main architectural decision: the rules are the part most likely to change as the library adjusts policy, and keeping them in one place means there is one place to change and one place to test.',
     architectureNotes: [
       'Business rules isolated in a domain service so they can be unit tested without the UI',
       'Filament gives the admin team a working interface without hand-built CRUD pages',
@@ -90,7 +90,7 @@ const SAMPLES: Record<string, Partial<Project>> = {
     team: '4 developers, 1 PM, 1 QA',
     timeline: '8 months (2023)',
     architecture:
-      'Laravel backend with a Nuxt frontend, split as two deployable applications communicating over a JSON API. PostgreSQL was not an option here — the client already ran their warehouse on SQL Server, so the backend talks to that directly and stores only its own state in MySQL.\n\nThe split was driven by the client having an existing Nuxt team. It meant two deploy pipelines and a CORS surface to maintain, which is real overhead, but it let the frontend move at the frontend team\'s pace instead of waiting on our release train.',
+      'Laravel backend with a Nuxt frontend, split as two deployable applications communicating over a JSON API. PostgreSQL was not an option here: the client already ran their warehouse on SQL Server, so the backend talks to that directly and stores only its own state in MySQL.\n\nThe split was driven by the client having an existing Nuxt team. It meant two deploy pipelines and a CORS surface to maintain, which is real overhead, but it let the frontend move at the frontend team\'s pace instead of waiting on our release train.',
     architectureNotes: [
       'JSON API between a Laravel backend and a Nuxt frontend, each deployed independently',
       'SQL Server integration for the client\'s existing warehouse systems',
