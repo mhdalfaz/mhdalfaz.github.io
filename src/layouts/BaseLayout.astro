@@ -22,6 +22,10 @@ interface Props {
 
 const { title, description, solidBackground = false } = Astro.props;
 
+// Mirrors the loader's EXAMPLE_CONTENT check so the page can say so out loud.
+// Not set in CI, so a published build never renders this.
+const exampleContent = import.meta.env.EXAMPLE_CONTENT === 'true';
+
 const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
 
@@ -69,6 +73,17 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <canvas id="particle-canvas" aria-hidden="true"></canvas>
 
     <div class="page">
+      {
+        exampleContent && (
+          <p class="example-banner" role="status">
+            <strong>Example content</strong>
+            <span>
+              Sample deep-dive copy is being shown so the layout can be reviewed. Replace it
+              in the Google Sheet, then drop the EXAMPLE_CONTENT flag.
+            </span>
+          </p>
+        )
+      }
       <Nav />
       <main id="main" class:list={['main', { 'main--solid': solidBackground }]}>
         <slot />
@@ -118,11 +133,34 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
   }
 
   /*
-   * Hero on the home page sits on an opaque surface. The particle field is
-   * still rendered behind it but is fully hidden, which keeps the headline
-   * crisp while the rest of the page keeps the depth effect.
+   * Home hero sits on an opaque surface. The neuron field still renders behind
+   * it but is hidden there, which keeps the headline crisp while the rest of
+   * the page keeps the depth effect.
    */
   .main--solid {
     background-color: var(--ink);
+  }
+
+  /* Loud enough that placeholder copy is never mistaken for real content. */
+  .example-banner {
+    position: sticky;
+    top: 0;
+    z-index: 60;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-3);
+    align-items: baseline;
+    padding: var(--space-3) var(--space-4);
+    border-block-end: 1px solid var(--paper);
+    background-color: var(--paper);
+    color: var(--ink);
+    font-size: var(--text-xs);
+  }
+
+  .example-banner strong {
+    font-family: var(--font-mono);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    white-space: nowrap;
   }
 </style>

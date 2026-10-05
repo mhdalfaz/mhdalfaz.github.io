@@ -12,6 +12,7 @@ import type { SheetRecord } from './sheet.ts';
 import { fetchSheetRecords } from './sheet.ts';
 import { dedupeBySlug, mapRecords } from './project-mapper.ts';
 import { projectSchema, type Project } from './project-schema.ts';
+import { applyExampleContent } from '../data/example-content.ts';
 import snapshot from '../data/projects.snapshot.json' with { type: 'json' };
 
 function normalise(rows: SheetRecord[]): Project[] {
@@ -33,6 +34,14 @@ export function projectsLoader(options: ProjectsLoaderOptions = {}): Loader {
   // the Node sync script, where Vite has not replaced it.
   const envOffline = import.meta.env?.OFFLINE_DATA === 'true';
   const forceOffline = offline || envOffline || process.env.OFFLINE_DATA === 'true';
+
+  /*
+   * EXAMPLE_CONTENT=true overlays sample deep-dive copy so the project pages can
+   * be reviewed with realistic prose before the real Sheet columns are filled
+   * in. Real values always win over the samples. Must never be on in CI.
+   */
+  const withExamples =
+    import.meta.env?.EXAMPLE_CONTENT === 'true' || process.env.EXAMPLE_CONTENT === 'true';
 
   return {
     name: 'google-sheets-projects',
@@ -57,6 +66,14 @@ export function projectsLoader(options: ProjectsLoaderOptions = {}): Loader {
             }). Falling back to the committed snapshot with ${projects.length} project(s).`,
           );
         }
+      }
+
+      if (withExamples) {
+        logger.warn(
+          'projects: EXAMPLE_CONTENT is on. Sample deep-dive copy is being used. ' +
+            'Never set this in CI — it will publish placeholder text.',
+        );
+        projects = applyExampleContent(projects);
       }
 
       store.clear();

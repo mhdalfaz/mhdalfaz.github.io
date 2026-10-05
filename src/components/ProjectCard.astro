@@ -31,18 +31,17 @@ const links = [
     <div class="card__media">
       {
         project.image ? (
-          <>
-            {/* Two stacked copies: the second one slides in to reveal a parallax feel. */}
-            <img class="card__img" src={project.image} alt="" loading="lazy" decoding="async" />
-            <img
-              class="card__img card__img--ghost"
-              src={project.image}
-              alt=""
-              loading="lazy"
-              decoding="async"
-              aria-hidden="true"
-            />
-          </>
+          /*
+           * One image, one transform. An earlier version stacked two copies and
+           * slid the top one down, which only moved the visible band and looked
+           * like a rendering glitch. Scaling a single layer moves the whole
+           * frame evenly, which is what the zoom-out needs.
+           *
+           * Start slightly scaled up (1.08) so there is headroom to zoom out to
+           * 1.0 — zooming out rather than in means the screenshot never crops
+           * differently between hover states.
+           */
+          <img class="card__img" src={project.image} alt="" loading="lazy" decoding="async" />
         ) : (
           <div class="card__placeholder" aria-hidden="true">
             <span>{project.name.slice(0, 2)}</span>
@@ -173,6 +172,11 @@ const links = [
     overflow: hidden;
     background-color: var(--ink-2);
     border-block-end: var(--border-hairline);
+    /*
+     * Containment hint: the image only scales, so the browser can composite it
+     * on its own layer instead of repainting the card every frame.
+     */
+    contain: paint;
   }
 
   .card__img {
@@ -182,28 +186,23 @@ const links = [
     block-size: 100%;
     object-fit: cover;
     filter: grayscale(1) contrast(1.06);
+    /*
+     * Resting state is scaled up and dimmed; hover relaxes both. Scaling the
+     * single layer is what makes the whole frame move evenly.
+     */
+    transform: scale(1.08);
+    opacity: 0.82;
     transition:
-      transform var(--duration-slow) var(--ease-out),
-      filter var(--duration-slow) var(--ease-out);
+      transform 620ms var(--ease-out),
+      opacity 420ms var(--ease-out),
+      filter 620ms var(--ease-out);
   }
 
-  /*
-   * Sits slightly larger than the frame. On hover it translates up, exposing a
-   * new band of the same screenshot above the frame edge — a parallax reveal
-   * without any extra assets.
-   */
-  .card__img--ghost {
-    inset-block-start: -18%;
-    transition: transform var(--duration-slow) var(--ease-out);
-  }
-
-  .card:hover .card__img {
-    transform: scale(1.03);
-    filter: grayscale(1) contrast(1.12) brightness(1.12);
-  }
-
-  .card:hover .card__img--ghost {
-    transform: translate3d(0, calc(var(--duration-slow) * 0 + 18%), 0) scale(1.03);
+  .card:hover .card__img,
+  .card:focus-within .card__img {
+    transform: scale(1);
+    opacity: 1;
+    filter: grayscale(1) contrast(1.12) brightness(1.1);
   }
 
   .card__placeholder {
@@ -334,9 +333,10 @@ const links = [
   }
 
   @media (prefers-reduced-motion: reduce) {
+    .card,
     .card:hover,
     .card__img,
-    .card__img--ghost {
+    .card:hover .card__img {
       transform: none;
       transition: none;
     }

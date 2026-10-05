@@ -32,7 +32,21 @@ const problems = [];
 const note = (page, message) => problems.push(`${page}: ${message}`);
 
 const all = await walk(DIST);
-const htmlFiles = all.filter((file) => file.endsWith('.html'));
+
+/**
+ * Static verification files that are copied verbatim from public/ and are not
+ * pages we author. They are deployment artefacts (AdSense/Google site
+ * verification tokens), so the page-structure rules below do not apply.
+ */
+const NON_PAGE_HTML = new Set([
+  'googleade696638589c782.html',
+  'ads.txt',
+  'robots.txt',
+]);
+
+const htmlFiles = all.filter(
+  (file) => file.endsWith('.html') && !NON_PAGE_HTML.has(relative(DIST, file).split('\\').pop() ?? ''),
+);
 
 // --- asset + link resolution -----------------------------------------------
 

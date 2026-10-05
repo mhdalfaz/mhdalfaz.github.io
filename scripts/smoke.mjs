@@ -67,6 +67,69 @@ const canvasPainted = await page.evaluate(() => {
 });
 check('particle canvas is painting', canvasPainted);
 
+/*
+ * The neuron network must actually animate, and impulses must appear. A static
+ * or empty canvas would still pass the "is painting" check above, so sample
+ * several frames and assert both movement and the bright signal pixels that
+ * distinguish an active network from plain drifting dots.
+ */
+const frames = [];
+for (let i = 0; i < 4; i += 1) {
+  frames.push(
+    await page.evaluate(() => {
+      const canvas = document.getElementById('particle-canvas');
+      if (!(canvas instanceof HTMLCanvasElement)) return { lit: 0, bright: 0 };
+      const context = canvas.getContext('2d');
+      if (!context) return { lit: 0, bright: 0 };
+      const { data } = context.getImageData(0, 0, canvas.width, canvas.height);
+      let lit = 0;
+      let bright = 0;
+      for (let p = 3; p < data.length; p += 4) {
+        if (data[p] > 0) lit += 1;
+        if (data[p] > 90) bright += 1;
+      }
+      return { lit, bright };
+    }),
+  );
+  await page.waitForTimeout(700);
+}
+
+check(
+  'neuron network animates over time',
+  new Set(frames.map((f) => f.lit)).size > 1,
+  `lit counts: ${frames.map((f) => f.lit).join(',')}`,
+);
+check(
+  'synapse impulses fire',
+  Math.max(...frames.map((f) => f.bright)) > 0,
+  `max bright: ${Math.max(...frames.map((f) => f.bright))}`,
+);
+
+// The network is background decoration, so it must stay sparse enough that
+// content on top of it stays readable.
+const coverage = Math.max(...frames.map((f) => f.lit)) / (1440 * 900 * 4);
+check('network stays subtle', coverage < 0.25, `${(coverage * 100).toFixed(1)}% coverage`);
+
+// The network rewires and steps signals every frame, so a dropped frame rate
+// would mean the background is competing with the content for main-thread time.
+const fps = await page.evaluate(
+  () =>
+    new Promise((resolve) => {
+      let count = 0;
+      const start = performance.now();
+      const tick = () => {
+        count += 1;
+        if (performance.now() - start < 2000) {
+          requestAnimationFrame(tick);
+        } else {
+          resolve(Math.round((count / (performance.now() - start)) * 1000));
+        }
+      };
+      requestAnimationFrame(tick);
+    }),
+);
+check('renders at 60fps', fps >= 50, `${fps}fps`);
+
 check(
   'canvas fades in',
   await page.evaluate(
@@ -140,6 +203,30 @@ check('h1 names the project', ((await page.locator('h1').textContent()) ?? '').i
 check('facts sidebar present', (await page.locator('.facts__row').count()) > 0);
 check('stack tags present', (await page.locator('.tag').count()) > 0);
 check('pager present', (await page.locator('.pager__link').count()) > 0);
+
+// The card zoom must scale a single layer. An earlier version stacked two
+// images and slid the top one, which only moved the bottom band.
+await page.goto(`${BASE}/projects`, { waitUntil: 'domcontentloaded' });
+await page.waitForTimeout(900);
+const card = page.locator('.card').first();
+check('one image per card', (await card.locator('img').count()) === 1);
+const restTransform = await card
+  .locator('.card__img')
+  .evaluate((el) => getComputedStyle(el).transform);
+await card.hover();
+await page.waitForTimeout(800);
+const hoverTransform = await card
+  .locator('.card__img')
+  .evaluate((el) => getComputedStyle(el).transform);
+check('card image zooms on hover', restTransform !== hoverTransform, `${restTransform} -> ${hoverTransform}`);
+check(
+  'card zoom scales uniformly (no directional slide)',
+  restTransform.startsWith('matrix(1.08') && hoverTransform.startsWith('matrix(1,'),
+  `${restTransform} / ${hoverTransform}`,
+);
+
+await page.goto(`${BASE}/projects/gsi-project`, { waitUntil: 'domcontentloaded' });
+await page.waitForTimeout(400);
 
 // --- client-side navigation + view transitions -----------------------------
 

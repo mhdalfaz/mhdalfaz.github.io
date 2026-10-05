@@ -13,6 +13,7 @@
     "check": "astro check",
     "data:sync": "node --experimental-strip-types scripts/sync-data.mjs",
     "data:sync:check": "node --experimental-strip-types scripts/sync-data.mjs --check",
+    "dev:example": "node scripts/dev-example.mjs",
     "verify": "astro build && node scripts/verify-build.mjs",
     "smoke": "node scripts/smoke.mjs"
   },

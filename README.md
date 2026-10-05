@@ -7,15 +7,17 @@ Astro rebuild of the portfolio. Static output, deployed to GitHub Pages from the
 
 - **Interaction-first.** Particle field background, scroll-triggered reveals,
   a searchable and filterable project grid, view transitions between pages, and
-  parallax card imagery. All of it degrades to a plain readable page without
+  a zoom-out on card imagery. All of it degrades to a plain readable page without
   JavaScript.
 - **Strictly monochrome.** Black, white, and alpha-derived greys only. Depth
   comes from hairlines, opacity, and gradients rather than hue. This is enforced
   by a build check (`npm run verify`).
-- **Subtle motion.** The background is a light canvas particle field, not 3D.
-  Particle count scales with viewport area and is capped at 110. Everything
-  respects `prefers-reduced-motion`, and the particle loop pauses when the tab
-  is hidden.
+- **Subtle motion.** The background is a light canvas neuron network, not 3D.
+  Two node populations (neurons and surrounding tissue nodes), persistent
+  synapses that rewire over time, and impulses that travel down axons and light
+  up the node they reach. Node count scales with viewport area and is capped at
+  96, which measures a steady 60fps. Everything respects
+  `prefers-reduced-motion`, and the loop pauses when the tab is hidden.
 - **Deep project write-ups.** Every project gets a page with architecture,
   the role you played, challenges, and key features.
 
@@ -34,6 +36,7 @@ npm run dev          # http://localhost:4321
 | `npm run check` | `astro check` — types across `.astro` and `.ts` |
 | `npm run verify` | Build, then assert links/headings/alt-text/monochrome |
 | `npm run smoke` | Headless browser test against a running `preview` |
+| `npm run dev:example` | Dev server with sample deep-dive copy overlaid |
 | `npm run data:sync` | Refresh the data snapshot from the Google Sheet |
 | `npm run data:sync:check` | Fail if the snapshot is stale |
 
@@ -79,11 +82,28 @@ node scripts/make-sheet-template.mjs
 npm run check    # 0 errors, 0 warnings, 0 hints
 npm run verify   # link integrity, heading order, alt text, monochrome
 npm run preview  # in one terminal
-npm run smoke    # 34 browser assertions: canvas, filters, nav, a11y, reduced motion
+npm run smoke    # 41 browser assertions: network, filters, nav, a11y, motion, perf
 ```
 
 `npm run smoke` uses the Chrome already installed on the machine via
 `playwright-core`, so nothing is downloaded. It expects `preview` on port 4322.
+
+## Previewing before the content is written
+
+The Sheet only has the original 10 columns, so the deep-dive sections of each
+project page have nothing to render yet. To review the layout with realistic
+prose:
+
+```bash
+npm run dev:example
+```
+
+This overlays sample copy onto `library-app`, `rekam-medis`, and `pnp-scm`
+from `src/data/example-content.ts`. Real sheet values always win, so it never
+overrides anything you have written. A banner appears at the top of every page
+while it is on, and the build logs a warning.
+
+It is off by default and never set in CI, so placeholder copy cannot ship.
 
 ## Deployment
 

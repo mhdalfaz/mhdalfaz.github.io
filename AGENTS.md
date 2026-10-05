@@ -13,6 +13,7 @@ npm run preview        # serve dist/ on :4322
 npm run check          # astro check (types across .astro and .ts)
 npm run verify         # build + link/heading/alt/monochrome assertions
 npm run smoke          # headless browser tests, needs `preview` running
+npm run dev:example    # dev server with sample deep-dive copy overlaid
 npm run data:sync      # refresh the project snapshot from the Google Sheet
 ```
 
@@ -52,7 +53,11 @@ header text, not position, so columns can be inserted or reordered freely.
   while content is filled in gradually.
 - **Motion is progressive.** Anything animated needs a
   `prefers-reduced-motion` fallback, and interactive elements need a usable
-  non-JS state.
+  non-JS state. The canvas background must keep 60fps, so cap node counts and
+  avoid per-frame allocation in `src/scripts/particles.ts`.
+- **EXAMPLE_CONTENT is preview-only.** It overlays placeholder copy from
+  `src/data/example-content.ts`. Never set it in CI; `npm run smoke` and the
+  build warning guard against it shipping by accident.
 - **Astro 7 specifics.** The compiler is the Rust one and is strict about
   unclosed tags and invalid HTML nesting. `compressHTML` defaults to `'jsx'`,
   so inline elements need an explicit `{' '}` where whitespace matters.
