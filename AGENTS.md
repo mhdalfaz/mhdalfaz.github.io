@@ -1,8 +1,8 @@
 ## Development
 
 This is the Astro 7 portfolio. Static output, deployed to GitHub Pages from the
-`v3` branch. See `README.md` for the overview and `docs/PROJECT_DATA.md` for the
-Google Sheet column reference.
+`main` branch, with `v3` as the working branch. See `README.md` for the overview
+and `docs/PROJECT_DATA.md` for the Google Sheet column reference.
 
 ### Commands
 
