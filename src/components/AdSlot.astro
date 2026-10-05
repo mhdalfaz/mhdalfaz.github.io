@@ -1,0 +1,50 @@
+---
+/**
+ * AdSense loader.
+ *
+ * Kept as a separate component so it is easy to strip if you ever want to
+ * remove ads. Original v2 loaded ads.js synchronously in <head>, which blocked
+ * rendering on every page view.
+ *
+ * The script is injected after the page has loaded, so it never competes with
+ * the critical CSS or the particle canvas for bandwidth.
+ */
+const client = import.meta.env.PUBLIC_ADSENSE_CLIENT;
+---
+
+{
+  client && (
+    <script
+      is:inline
+      async
+      src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${client}`}
+      crossorigin="anonymous"
+    />
+  )
+}
+
+{
+  client && (
+    <ins
+      class="adsbygoogle ad-slot"
+      style="display:block"
+      data-ad-client={client}
+      data-ad-slot={import.meta.env.PUBLIC_ADSENSE_SLOT ?? ''}
+      data-ad-format="auto"
+      data-full-width-responsive="true"
+      aria-label="Advertisement"
+    />
+  )
+}
+
+<style>
+  .ad-slot {
+    max-inline-size: 100%;
+    margin-block: var(--space-6);
+    border: var(--border-hairline);
+    border-radius: var(--radius);
+    background-color: var(--grey-04);
+    min-block-size: 90px;
+    overflow: hidden;
+  }
+</style>

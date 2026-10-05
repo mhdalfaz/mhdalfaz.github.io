@@ -1,0 +1,50 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Not found — Muhammad Alfaz" description="That page does not exist.">
+  <section class="section shell shell--narrow">
+    <div class="notfound">
+      <p class="notfound__code" aria-hidden="true">404</p>
+      <h1 class="notfound__title">This page doesn't exist.</h1>
+      <p class="lede">
+        The link may be outdated, or the project it pointed at was renamed.
+      </p>
+      <div class="notfound__actions">
+        <a class="btn btn--solid" href="/projects">Browse projects</a>
+        <a class="btn" href="/">Back home</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .notfound {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-4);
+    padding-block: var(--space-8);
+  }
+
+  .notfound__code {
+    font-family: var(--font-display);
+    font-size: clamp(4rem, 18vw, 9rem);
+    font-weight: 600;
+    line-height: 0.9;
+    letter-spacing: -0.05em;
+    color: var(--grey-08);
+    -webkit-text-stroke: 1px var(--grey-15);
+  }
+
+  .notfound__title {
+    font-size: var(--text-3xl);
+  }
+
+  .notfound__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-block-start: var(--space-2);
+  }
+</style>

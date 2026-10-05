@@ -1,0 +1,370 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+
+const projects = (await getCollection('projects')).map((entry) => entry.data);
+
+/**
+ * Filters are derived from the data rather than hardcoded, so adding a new
+ * Domain value in the sheet automatically adds a filter chip.
+ */
+const domains = [...new Set(projects.map((p) => p.domain).filter(Boolean))].sort() as string[];
+---
+
+<BaseLayout
+  title="Projects — Muhammad Alfaz"
+  description={`${projects.length} web projects: architecture breakdowns, my role on each, and the stack behind them.`}
+>
+  <section class="section shell">
+    <header class="page-head" data-reveal>
+      <p class="eyebrow">Archive</p>
+      <h1 class="page-head__title">Projects</h1>
+      <p class="lede">
+        {projects.length} projects across healthcare, government, office, and
+        accounting software. Open one for the architecture, the trade-offs, and
+        what I was responsible for.
+      </p>
+    </header>
+
+    <!-- Controls: text query + filter chips. Both are progressive: without JS
+         the full list is still rendered and every card links normally. -->
+    <div class="controls" data-reveal>
+      <div class="search">
+        <svg class="search__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.4"></circle>
+          <path
+            d="m10.5 10.5 3 3"
+            stroke="currentColor"
+            stroke-width="1.4"
+            stroke-linecap="round"></path>
+        </svg>
+        <input
+          type="search"
+          id="project-search"
+          class="search__input"
+          placeholder="Search by name, tool, or domain…"
+          autocomplete="off"
+          aria-label="Search projects"
+          aria-describedby="result-count"
+        />
+      </div>
+
+      <div class="chips" role="group" aria-label="Filter projects">
+        <button class="chip is-active" type="button" data-filter="all" aria-pressed="true">
+          All
+          <span class="chip__count">{projects.length}</span>
+        </button>
+        {
+          ['public', 'private'].map((visibility) => {
+            const count = projects.filter((p) => p.visibility === visibility).length;
+            if (count === 0) return null;
+            return (
+              <button
+                class="chip"
+                type="button"
+                data-filter={visibility}
+                aria-pressed="false"
+              >
+                {visibility === 'public' ? 'Open source' : 'Client work'}
+                <span class="chip__count">{count}</span>
+              </button>
+            );
+          })
+        }
+        {
+          domains.map((domain) => (
+            <button class="chip" type="button" data-filter={`domain:${domain}`} aria-pressed="false">
+              {domain}
+              <span class="chip__count">
+                {projects.filter((p) => p.domain === domain).length}
+              </span>
+            </button>
+          ))
+        }
+      </div>
+    </div>
+
+    <p class="result-count" id="result-count" aria-live="polite">
+      Showing all {projects.length} projects
+    </p>
+
+    <div class="grid" id="project-grid">
+      {
+        projects.map((project, index) => (
+          <div
+            class="grid__item"
+            data-name={project.name.toLowerCase()}
+            data-visibility={project.visibility}
+            data-domain={(project.domain ?? '').toLowerCase()}
+            data-tools={project.tools.join(' ').toLowerCase()}
+          >
+            <ProjectCard project={project} index={index} />
+          </div>
+        ))
+      }
+    </div>
+
+    <p class="empty" id="empty-state" hidden>
+      Nothing matches that search. Try a different term, or
+      <button class="empty__reset" type="button" data-reset>clear the filters</button>.
+    </p>
+  </section>
+</BaseLayout>
+
+<script>
+  import { initReveal } from '../../scripts/ui';
+
+  /**
+   * Client-side filtering over the statically rendered cards.
+   *
+   * Rather than re-fetching, this hides/shows existing DOM nodes, which keeps
+   * the page working with JS disabled and avoids a second source of truth.
+   */
+  function setupFilters() {
+    const root = document.getElementById('project-grid');
+    const search = document.getElementById('project-search') as HTMLInputElement | null;
+    const countEl = document.getElementById('result-count');
+    const emptyEl = document.getElementById('empty-state');
+    const resetBtn = document.querySelector('[data-reset]');
+    const chips = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-filter]'));
+
+    if (!root || !search || !countEl || !emptyEl) return;
+
+    // Stable non-nullable aliases: the callbacks below are hoisted, so TS will
+    // not carry the null guard into their bodies.
+    const gridRoot = root;
+    const searchInput = search;
+    const countOutput = countEl;
+    const emptyOutput = emptyEl;
+
+    const items = Array.from(gridRoot.querySelectorAll<HTMLElement>('.grid__item'));
+    const total = items.length;
+    let active = 'all';
+
+    function apply() {
+      const query = searchInput.value.trim().toLowerCase();
+      let shown = 0;
+
+      for (const item of items) {
+        const matchesText =
+          query === '' ||
+          (item.dataset.name ?? '').includes(query) ||
+          (item.dataset.tools ?? '').includes(query) ||
+          (item.dataset.domain ?? '').includes(query);
+
+        const matchesFilter =
+          active === 'all' ||
+          (active === 'domain'
+            ? false
+            : active.startsWith('domain:')
+              ? item.dataset.domain === active.slice('domain:'.length).toLowerCase()
+              : item.dataset.visibility === active);
+
+        const visible = matchesText && matchesFilter;
+        item.hidden = !visible;
+        if (visible) shown += 1;
+      }
+
+      countOutput.textContent =
+        shown === total
+          ? `Showing all ${total} projects`
+          : `Showing ${shown} of ${total} projects`;
+
+      emptyOutput.toggleAttribute('hidden', shown > 0);
+    }
+
+    searchInput.addEventListener('input', apply);
+
+    // Arrow-key navigation across chips, which makes the filter group feel
+    // like a proper segmented control rather than loose buttons.
+    chips.forEach((chip) => {
+      chip.addEventListener('click', () => {
+        active = chip.dataset.filter ?? 'all';
+        chips.forEach((other) => {
+          const isActive = other === chip;
+          other.classList.toggle('is-active', isActive);
+          other.setAttribute('aria-pressed', String(isActive));
+        });
+        apply();
+      });
+
+      chip.addEventListener('keydown', (event) => {
+        const keys = ['ArrowRight', 'ArrowLeft'];
+        if (!keys.includes(event.key)) return;
+        event.preventDefault();
+        const index = chips.indexOf(chip);
+        const next = event.key === 'ArrowRight' ? index + 1 : index - 1;
+        chips[(next + chips.length) % chips.length]?.focus();
+      });
+    });
+
+    resetBtn?.addEventListener('click', () => {
+      searchInput.value = '';
+      active = 'all';
+      chips.forEach((chip) => {
+        const isAll = chip.dataset.filter === 'all';
+        chip.classList.toggle('is-active', isAll);
+        chip.setAttribute('aria-pressed', String(isAll));
+      });
+      apply();
+      searchInput.focus();
+    });
+  }
+
+  // Re-initialise after a client-side navigation back to this page. The body
+  // is swapped, so the previous listeners are gone with the old DOM; the only
+  // listener that persists is this document-level one.
+  document.addEventListener('astro:after-swap', () => {
+    initReveal();
+    setupFilters();
+  });
+
+  setupFilters();
+</script>
+
+<style>
+  .page-head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin-block-end: var(--space-6);
+    max-inline-size: 60ch;
+  }
+
+  .page-head__title {
+    font-size: var(--text-4xl);
+  }
+
+  /* --- controls --------------------------------------------------------- */
+
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    align-items: center;
+    justify-content: space-between;
+    padding-block: var(--space-4);
+    border-block: var(--border-hairline);
+  }
+
+  .search {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex: 1 1 260px;
+    max-inline-size: 340px;
+  }
+
+  .search__icon {
+    position: absolute;
+    inset-inline-start: var(--space-3);
+    inline-size: 15px;
+    block-size: 15px;
+    color: var(--grey-50);
+    pointer-events: none;
+  }
+
+  .search__input {
+    inline-size: 100%;
+    padding: 0.6em 1em 0.6em 2.4em;
+    border: var(--border-hairline);
+    border-radius: var(--radius-full);
+    background-color: var(--grey-04);
+    font-size: var(--text-sm);
+    transition:
+      border-color var(--duration-fast) var(--ease-out),
+      background-color var(--duration-fast) var(--ease-out);
+  }
+
+  .search__input::placeholder {
+    color: var(--grey-50);
+  }
+
+  .search__input:focus-visible {
+    border-color: var(--grey-30);
+    background-color: var(--grey-08);
+    outline-offset: 0;
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 0.45em 0.9em;
+    border: var(--border-hairline);
+    border-radius: var(--radius-full);
+    font-size: var(--text-sm);
+    color: var(--grey-70);
+    transition:
+      background-color var(--duration-fast) var(--ease-out),
+      color var(--duration-fast) var(--ease-out),
+      border-color var(--duration-fast) var(--ease-out);
+  }
+
+  .chip:hover {
+    color: var(--paper);
+    border-color: var(--grey-30);
+  }
+
+  .chip.is-active {
+    background-color: var(--paper);
+    border-color: var(--paper);
+    color: var(--ink);
+  }
+
+  .chip__count {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--grey-50);
+  }
+
+  .chip.is-active .chip__count {
+    color: var(--ink);
+    opacity: 0.55;
+  }
+
+  .result-count {
+    margin-block: var(--space-4);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--grey-50);
+  }
+
+  /* --- grid -------------------------------------------------------------- */
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+    gap: var(--space-5);
+  }
+
+  /* Hidden by the filter script; also correct before JS runs. */
+  .grid__item[hidden] {
+    display: none;
+  }
+
+  .empty {
+    padding: var(--space-8) var(--space-4);
+    text-align: center;
+    color: var(--paper-dim);
+  }
+
+  .empty__reset {
+    color: var(--paper);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  @media (max-width: 620px) {
+    .search {
+      max-inline-size: none;
+    }
+  }
+</style>

@@ -1,0 +1,262 @@
+---
+/**
+ * Site-wide header.
+ *
+ * Navigation is real links to real pages rather than the v2 fetch-and-swap
+ * approach, so deep links, back/forward, and view transitions all work.
+ */
+const path = Astro.url.pathname;
+
+const links = [
+  { href: '/', label: 'Home' },
+  { href: '/projects', label: 'Projects' },
+  { href: '/about', label: 'About' },
+  { href: '/contact', label: 'Contact' },
+];
+
+function isActive(href: string): boolean {
+  if (href === '/') return path === '/';
+  return path === href || path.startsWith(`${href}/`);
+}
+---
+
+<header class="site-header" data-header>
+  <div class="shell site-header__inner">
+    <a class="brand" href="/" aria-label="Muhammad Alfaz — home">
+      <span class="brand__mark" aria-hidden="true">A</span>
+      <span class="brand__name">Muhammad Alfaz</span>
+    </a>
+
+    <button
+      class="nav-toggle"
+      type="button"
+      data-nav-toggle
+      aria-expanded="false"
+      aria-controls="site-nav"
+    >
+      <span class="visually-hidden">Toggle navigation</span>
+      <span class="nav-toggle__bars" aria-hidden="true">
+        <span></span>
+        <span></span>
+      </span>
+    </button>
+
+    <nav class="site-nav" id="site-nav" data-nav aria-label="Main">
+      <ul class="site-nav__list">
+        {
+          links.map((link) => (
+            <li>
+              <a
+                class="site-nav__link"
+                href={link.href}
+                aria-current={isActive(link.href) ? 'page' : undefined}
+              >
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <a class="btn btn--ghost site-nav__cta" href="/contact">
+        Let's talk
+        <svg class="btn__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path
+            d="M3 8h10m0 0-4-4m4 4-4 4"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"></path>
+        </svg>
+      </a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background-color: rgb(0 0 0 / 0.6);
+    backdrop-filter: blur(14px) saturate(140%);
+    border-bottom: var(--border-hairline);
+    transition: background-color var(--duration-base) var(--ease-out);
+  }
+
+  .site-header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-5);
+    min-block-size: var(--nav-height);
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .brand__mark {
+    display: grid;
+    place-items: center;
+    inline-size: 34px;
+    block-size: 34px;
+    border: 1px solid var(--grey-30);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-sm);
+    transition:
+      background-color var(--duration-base) var(--ease-out),
+      color var(--duration-base) var(--ease-out);
+  }
+
+  .brand:hover .brand__mark {
+    background-color: var(--paper);
+    color: var(--ink);
+  }
+
+  .brand__name {
+    font-size: var(--text-base);
+  }
+
+  .site-nav {
+    display: flex;
+    align-items: center;
+    gap: var(--space-5);
+  }
+
+  .site-nav__list {
+    display: flex;
+    align-items: center;
+    gap: var(--space-5);
+    list-style: none;
+    padding: 0;
+  }
+
+  .site-nav__link {
+    position: relative;
+    font-size: var(--text-sm);
+    color: var(--grey-70);
+    padding-block: var(--space-2);
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+
+  /* Underline grows from the left on hover; aria-current gets it permanently. */
+  .site-nav__link::after {
+    content: '';
+    position: absolute;
+    inset-block-end: 0;
+    inset-inline-start: 0;
+    inline-size: 100%;
+    block-size: 1px;
+    background-color: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--duration-base) var(--ease-out);
+  }
+
+  .site-nav__link:hover,
+  .site-nav__link[aria-current='page'] {
+    color: var(--paper);
+  }
+
+  .site-nav__link:hover::after,
+  .site-nav__link[aria-current='page']::after {
+    transform: scaleX(1);
+  }
+
+  .nav-toggle {
+    display: none;
+    place-items: center;
+    inline-size: 42px;
+    block-size: 42px;
+    border: var(--border-hairline);
+    border-radius: var(--radius-sm);
+  }
+
+  .nav-toggle__bars {
+    display: grid;
+    gap: 5px;
+    inline-size: 17px;
+  }
+
+  .nav-toggle__bars span {
+    display: block;
+    block-size: 1.5px;
+    background-color: var(--paper);
+    transition: transform var(--duration-base) var(--ease-out);
+  }
+
+  .nav-toggle[aria-expanded='true'] .nav-toggle__bars span:first-child {
+    transform: translateY(3.25px) rotate(45deg);
+  }
+
+  .nav-toggle[aria-expanded='true'] .nav-toggle__bars span:last-child {
+    transform: translateY(-3.25px) rotate(-45deg);
+  }
+
+  @media (max-width: 760px) {
+    .nav-toggle {
+      display: grid;
+    }
+
+    .site-nav {
+      position: fixed;
+      inset: var(--nav-height) 0 auto;
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--space-5);
+      padding: var(--space-5) var(--space-4) var(--space-6);
+      background-color: var(--ink-1);
+      border-bottom: var(--border-hairline);
+      /* Hidden by default; the toggle flips data-open on the nav element. */
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-8px);
+      transition:
+        opacity var(--duration-base) var(--ease-out),
+        transform var(--duration-base) var(--ease-out),
+        visibility var(--duration-base);
+    }
+
+    .site-nav[data-open='true'] {
+      opacity: 1;
+      visibility: visible;
+      transform: none;
+    }
+
+    .site-nav__list {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+    }
+
+    .site-nav__link {
+      display: block;
+      padding-block: var(--space-4);
+      font-size: var(--text-lg);
+      border-bottom: var(--border-hairline);
+    }
+
+    .site-nav__link::after {
+      display: none;
+    }
+
+    .site-nav__cta {
+      justify-content: center;
+    }
+
+    .brand__name {
+      font-size: var(--text-sm);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .site-nav {
+      transition: none;
+    }
+  }
+</style>

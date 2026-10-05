@@ -1,0 +1,398 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { profile, stack } from '../data/profile';
+
+const projects = (await getCollection('projects')).map((entry) => entry.data);
+
+// Featured projects lead the page; fall back to the most recent when the sheet
+// has not set the Featured column yet.
+const featured = projects
+  .filter((project) => project.featured)
+  .slice(0, 3);
+const showcase = featured.length > 0
+  ? featured
+  : [...projects].sort((a, b) => (b.year ?? 0) - (a.year ?? 0)).slice(0, 3);
+
+const totalTools = new Set(projects.flatMap((project) => project.tools)).size;
+const openSource = projects.filter((project) => project.visibility === 'public').length;
+---
+
+<BaseLayout
+  title={`${profile.name} — ${profile.role}`}
+  description={profile.bio}
+>
+  <!-- Hero -->
+  <section class="hero">
+    <div class="shell hero__inner">
+      <p class="hero__status">
+        <span class="hero__dot" aria-hidden="true"></span>
+        {profile.availability}
+      </p>
+
+      <h1 class="hero__title">
+        <span class="hero__line">{profile.role}</span>
+        <span class="hero__line hero__line--muted">
+          building for the web,
+          <br />
+          <span class="hero__name">{profile.name}</span>
+        </span>
+      </h1>
+
+      <p class="hero__lede">{profile.bio}</p>
+
+      <div class="hero__actions">
+        <a class="btn btn--solid" href="/projects">
+          View all {projects.length} projects
+          <svg class="btn__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path
+              d="M3 8h10m0 0-4-4m4 4-4 4"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"></path>
+          </svg>
+        </a>
+        <a class="btn" href="/contact">Get in touch</a>
+      </div>
+
+      <dl class="hero__stats">
+        <div class="hero__stat">
+          <dt>Projects shipped</dt>
+          <dd>{projects.length}</dd>
+        </div>
+        <div class="hero__stat">
+          <dt>Open source</dt>
+          <dd>{openSource}</dd>
+        </div>
+        <div class="hero__stat">
+          <dt>Technologies</dt>
+          <dd>{totalTools}</dd>
+        </div>
+      </dl>
+    </div>
+
+    <!-- Scroll cue: a thin line that animates downward. -->
+    <div class="hero__cue" aria-hidden="true">
+      <span></span>
+    </div>
+  </section>
+
+  <!-- Featured work -->
+  {
+    showcase.length > 0 && (
+      <section class="section shell" aria-labelledby="showcase-heading">
+        <div class="section-head" data-reveal>
+          <p class="eyebrow">Selected work</p>
+          <h2 class="section-heading" id="showcase-heading">
+            Projects worth a closer look
+          </h2>
+          <p class="lede">
+            Each one breaks down the architecture, the decisions behind it, and where I
+            actually fit into the team.
+          </p>
+        </div>
+
+        <div class="grid grid--feature">
+          {showcase.map((project, index) => (
+            <ProjectCard project={project} index={index} />
+          ))}
+        </div>
+
+        <div class="section-more" data-reveal>
+          <a class="btn" href="/projects">
+            Browse everything
+            <svg class="btn__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path
+                d="M3 8h10m0 0-4-4m4 4-4 4"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </a>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- Stack -->
+  <section class="section shell" aria-labelledby="stack-heading">
+    <div class="section-head" data-reveal>
+      <p class="eyebrow">Toolbox</p>
+      <h2 class="section-heading" id="stack-heading">What I work with</h2>
+    </div>
+
+    <div class="stack-grid">
+      {
+        stack.map((category, index) => (
+          <div class="stack-card panel panel--lit" data-reveal style={`--reveal-delay: ${index * 60}ms`}>
+            <h3 class="stack-card__title">{category.group}</h3>
+            <ul class="stack-card__list">
+              {category.items.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* --- hero --------------------------------------------------------------- */
+
+  .hero {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-block-size: min(88vh, 820px);
+    padding-block: var(--space-8) var(--space-9);
+    overflow: hidden;
+  }
+
+  .hero__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-5);
+  }
+
+  .hero__status {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 0.35em 0.9em 0.35em 0.7em;
+    border: var(--border-hairline);
+    border-radius: var(--radius-full);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--grey-70);
+  }
+
+  .hero__dot {
+    inline-size: 6px;
+    block-size: 6px;
+    border-radius: var(--radius-full);
+    background-color: var(--paper);
+    /* Slow pulse — the only looping animation on the page. */
+    animation: pulse 2.6s var(--ease-in-out) infinite;
+  }
+
+  @keyframes pulse {
+    0%,
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.35;
+      transform: scale(0.7);
+    }
+  }
+
+  .hero__title {
+    font-size: var(--text-5xl);
+    letter-spacing: -0.035em;
+  }
+
+  .hero__line {
+    display: block;
+  }
+
+  .hero__line--muted {
+    color: var(--grey-50);
+  }
+
+  /*
+   * Fades from solid white at the top to a dim grey at the baseline, so the
+   * name reads as lit from above. background-clip handles the fill; the
+   * text-stroke is kept as a fallback if background-clip is unsupported.
+   */
+  .hero__name {
+    -webkit-text-stroke: 1px var(--grey-50);
+    color: transparent;
+    background: linear-gradient(180deg, var(--paper) 40%, var(--grey-30) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .hero__lede {
+    max-inline-size: 58ch;
+    font-size: var(--text-lg);
+    color: var(--paper-dim);
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  .hero__stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-6);
+    margin-block-start: var(--space-4);
+    padding-block-start: var(--space-5);
+    border-top: var(--border-hairline);
+    inline-size: 100%;
+  }
+
+  .hero__stat dt {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--grey-50);
+  }
+
+  .hero__stat dd {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  .hero__cue {
+    position: absolute;
+    inset-block-end: var(--space-5);
+    inset-inline-start: 50%;
+    translate: -50% 0;
+    inline-size: 1px;
+    block-size: 56px;
+    background-color: var(--grey-15);
+    overflow: hidden;
+  }
+
+  .hero__cue span {
+    position: absolute;
+    inset-inline: 0;
+    block-size: 40%;
+    background-color: var(--grey-50);
+    animation: cue 2.8s var(--ease-in-out) infinite;
+  }
+
+  @keyframes cue {
+    0% {
+      transform: translateY(-100%);
+    }
+    60%,
+    100% {
+      transform: translateY(250%);
+    }
+  }
+
+  /* --- sections ------------------------------------------------------------ */
+
+  .section-head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin-block-end: var(--space-6);
+    max-inline-size: 60ch;
+  }
+
+  .grid {
+    display: grid;
+    gap: var(--space-5);
+  }
+
+  /*
+   * The first featured card spans two columns so the row has a deliberate
+   * rhythm rather than three identical cards.
+   */
+  .grid--feature {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .grid--feature > :first-child {
+    grid-column: span 2;
+  }
+
+  .section-more {
+    display: flex;
+    justify-content: center;
+    margin-block-start: var(--space-6);
+  }
+
+  .stack-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
+    gap: var(--space-4);
+  }
+
+  .stack-card {
+    padding: var(--space-5);
+  }
+
+  .stack-card__title {
+    margin-block-end: var(--space-3);
+    font-size: var(--text-sm);
+    font-family: var(--font-mono);
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--grey-50);
+  }
+
+  .stack-card__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    list-style: none;
+    padding: 0;
+  }
+
+  .stack-card__list li {
+    padding: 0.2em 0.6em;
+    border: var(--border-hairline);
+    border-radius: var(--radius-full);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--grey-70);
+  }
+
+  /* --- responsive ---------------------------------------------------------- */
+
+  @media (max-width: 900px) {
+    .grid--feature {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .grid--feature > :first-child {
+      grid-column: span 2;
+    }
+  }
+
+  @media (max-width: 620px) {
+    .hero {
+      min-block-size: auto;
+      padding-block: var(--space-7) var(--space-8);
+    }
+
+    .grid--feature {
+      grid-template-columns: 1fr;
+    }
+
+    .grid--feature > :first-child {
+      grid-column: span 1;
+    }
+
+    .hero__cue {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero__dot,
+    .hero__cue span {
+      animation: none;
+    }
+  }
+</style>

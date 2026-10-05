@@ -1,0 +1,128 @@
+---
+/**
+ * Base layout: the document shell shared by every page.
+ *
+ * Owns the things that must survive client-side navigation:
+ *  - the particle canvas and its lifecycle
+ *  - the scroll-reveal observer
+ *  - the mobile nav open/close state
+ *  - active nav highlighting
+ */
+import { ClientRouter } from 'astro:transitions';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Keeps a page's hero off the particle field for maximum contrast. */
+  solidBackground?: boolean;
+}
+
+const { title, description, solidBackground = false } = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/png" href="/img/icon.png" />
+    <meta
+      name="google-signin-client_id"
+      content="281077271172-bhcu5od52gjkha6vl0539pc5kev48ana.apps.googleusercontent.com"
+    />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap"
+    />
+
+    <meta name="google-adsense-account" content="ca-pub-281077271172-bhcu5od52gjkha6vl0539pc5kev48ana" />
+    <meta name="google-adsense-client" content="ca-pub-281077271172-bhcu5od52gjkha6vl0539pc5kev48ana" />
+    <meta name="google-adsense-platform-domain" content="mhdalfaz.github.io" />
+
+    <ClientRouter />
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <canvas id="particle-canvas" aria-hidden="true"></canvas>
+
+    <div class="page">
+      <Nav />
+      <main id="main" class:list={['main', { 'main--solid': solidBackground }]}>
+        <slot />
+      </main>
+      <Footer />
+    </div>
+
+    <script>
+      import { initParticles } from '../scripts/particles';
+      import { initReveal, initNav } from '../scripts/ui';
+
+      /**
+       * ClientRouter replaces the whole document body on navigation, which
+       * means the <canvas> is a brand new element each time and the previous
+       * one's animation loop would keep running against a detached node.
+       * Keeping the teardown function lets us stop it before re-initialising.
+       */
+      let stopParticles: (() => void) | undefined;
+
+      function setupBackground() {
+        stopParticles?.();
+
+        const canvas = document.getElementById('particle-canvas');
+        if (canvas instanceof HTMLCanvasElement) {
+          stopParticles = initParticles({ canvas });
+        }
+      }
+
+      // astro:after-swap fires after every client-side navigation. The first
+      // load does not emit it, so bootstrap once and then keep re-initialising.
+      setupBackground();
+      initReveal();
+      initNav();
+
+      document.addEventListener('astro:after-swap', () => {
+        initReveal();
+        initNav();
+        setupBackground();
+      });
+    </script>
+  </body>
+</html>
+
+<style>
+  .main {
+    min-height: 60vh;
+  }
+
+  /*
+   * Hero on the home page sits on an opaque surface. The particle field is
+   * still rendered behind it but is fully hidden, which keeps the headline
+   * crisp while the rest of the page keeps the depth effect.
+   */
+  .main--solid {
+    background-color: var(--ink);
+  }
+</style>

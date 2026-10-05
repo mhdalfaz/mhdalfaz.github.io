@@ -1,0 +1,11 @@
+ID,Name,Slug,Description,Tagline,Homepage URL,Image URL,Repo URL,Tools,Visibility,Android Download,IOS Download,Domain,Year,Status,Featured,Role,Team,Timeline,Architecture,Architecture Notes,Challenges,Key Features,Demo Credentials,Gallery
+562151659,Library App,library-app,"Sistem pengelolaan peminjaman buku di perpustakaan. Covers catalogue, member management, and the borrowing rules engine.
+
+Demo user:
+email: admin@example.com
+password: password","Sistem peminjaman buku perpustakaan dengan modul katalog, anggota, dan aturan peminjaman.",https://library-sxxgvt.laravel.cloud/,https://drive.google.com/thumbnail?id=1rjn6uQwh9ItAC33EvEPWa7xL_Mn_Af9q&sz=w4000,https://github.com/mhdalfaz/library,"Laravel 12, Filament, PostgreSQL",public,,,Education,2024,Production,TRUE,"Backend developer. I designed the borrowing-rules engine and built the member and catalogue CRUD, then owned the Filament admin panel.","2 backend devs, 1 designer",3 months (2024),"Laravel monolith with a Filament admin layer on top of a service layer. PostgreSQL stores catalogue, members, and loan records.
+
+Borrowing rules (loan period, renew limit, overdue blocking) are enforced server-side in a single domain service rather than being duplicated across controllers, so the rule set has one place to change and one place to test.","Business rules isolated in a domain service so they can be tested without the UI, Filament gives the admin team a working UI without hand-built pages, PostgreSQL for relational integrity on loan records, Server-side validation on every write path, Read-optimised queries for the catalogue listing","Overdue books had to block a new borrowing automatically; staff previously checked by hand, Member fines are stored aggregates so reports stay consistent with the ledger, Catalogue search was slow (~2s); indexing brought it under 200ms","Catalogue with author and category filters, Member management with borrowing history, Borrowing rules engine with configurable loan periods, Overdue tracking and automatic blocking, Admin dashboard with usage stats","email: admin@example.com
+password: password",
+674556381,PNP SCM,,Sistem Supply Chain Management Parkland World Indonesia,,,,,"Backend: Laravel, Sqlsrv, Front End: Nuxt",private,,,Supply Chain,2023,,FALSE,,,,,,,,,
+,,,,,,,,,public,,,,,,,,,,,,,,,
