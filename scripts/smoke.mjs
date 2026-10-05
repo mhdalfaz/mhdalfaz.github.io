@@ -11,10 +11,31 @@
  *   node scripts/smoke.mjs [baseUrl]
  */
 
+import { existsSync } from 'node:fs';
 import { chromium } from 'playwright-core';
 
 const BASE = process.argv[2] ?? 'http://localhost:4322';
-const CHROME = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
+
+// Uses a locally installed Chrome so nothing has to be downloaded. CHROME_PATH
+// wins, then the usual per-platform install locations.
+const CHROME_CANDIDATES = [
+  process.env.CHROME_PATH,
+  'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+  '/usr/bin/google-chrome',
+  '/usr/bin/google-chrome-stable',
+  '/usr/bin/chromium',
+  '/usr/bin/chromium-browser',
+  '/snap/bin/chromium',
+  '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+].filter(Boolean);
+
+const CHROME = CHROME_CANDIDATES.find((candidate) => existsSync(candidate));
+if (!CHROME) {
+  console.error(
+    `No Chrome binary found. Tried:\n  ${CHROME_CANDIDATES.join('\n  ')}\nSet CHROME_PATH to override.`,
+  );
+  process.exit(1);
+}
 
 const failures = [];
 const passes = [];
@@ -24,8 +45,8 @@ function check(name, condition, detail = '') {
     passes.push(name);
     console.log(`  ok   ${name}`);
   } else {
-    failures.push(`${name}${detail ? ` — ${detail}` : ''}`);
-    console.log(`  FAIL ${name}${detail ? ` — ${detail}` : ''}`);
+    failures.push(`${name}${detail ? `: ${detail}` : ''}`);
+    console.log(`  FAIL ${name}${detail ? `: ${detail}` : ''}`);
   }
 }
 
@@ -109,6 +130,45 @@ check(
 // content on top of it stays readable.
 const coverage = Math.max(...frames.map((f) => f.lit)) / (1440 * 900 * 4);
 check('network stays subtle', coverage < 0.25, `${(coverage * 100).toFixed(1)}% coverage`);
+
+/*
+ * Regression guard for the streak artefact. A node wrapping at the canvas edge
+ * used to keep its synapses, so for a frame or two an edge was drawn straight
+ * across the viewport as a long white line. Longest lit run in a row catches
+ * that: axons are capped at reach * 2.6, about a quarter of the viewport width,
+ * while a stretched one spans nearly all of it.
+ */
+const streaks = [];
+for (let i = 0; i < 2; i += 1) {
+  streaks.push(
+    await page.evaluate(() => {
+      const canvas = document.getElementById('particle-canvas');
+      if (!(canvas instanceof HTMLCanvasElement)) return { longest: 0, width: 0 };
+      const context = canvas.getContext('2d');
+      if (!context) return { longest: 0, width: canvas.width };
+      const { width, height, data } = context.getImageData(0, 0, canvas.width, canvas.height);
+      let longest = 0;
+      // Every 6th row is enough: a stretched edge stays horizontal for many rows.
+      for (let y = 0; y < height; y += 6) {
+        let run = 0;
+        for (let x = 0; x < width; x += 1) {
+          run = data[(y * width + x) * 4 + 3] > 0 ? run + 1 : 0;
+          if (run > longest) longest = run;
+        }
+      }
+      return { longest, width };
+    }),
+  );
+  await page.waitForTimeout(900);
+}
+
+const longestRun = Math.max(...streaks.map((s) => s.longest));
+const canvasWidth = streaks[0].width;
+check(
+  'no edge is drawn across the viewport',
+  longestRun < canvasWidth * 0.3,
+  `longest lit run ${longestRun}px of ${canvasWidth}px`,
+);
 
 // The network rewires and steps signals every frame, so a dropped frame rate
 // would mean the background is competing with the content for main-thread time.
