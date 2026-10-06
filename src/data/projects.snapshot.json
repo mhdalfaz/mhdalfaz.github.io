@@ -1,0 +1,454 @@
+[
+  {
+    "id": "422176687",
+    "slug": "expo-starter-kit",
+    "name": "Expo Starter Kit",
+    "tagline": "Expo starter kit with basic authentication",
+    "description": "Expo starter kit with basic authentication",
+    "visibility": "public",
+    "featured": false,
+    "tools": [
+      "Expo",
+      "React Redux",
+      "Socket.IO",
+      "gluestack-ui"
+    ],
+    "homepage": "https://expo-starter-auth.vercel.app",
+    "repo": "https://github.com/mhdalfaz/expo-starter-auth",
+    "androidDownload": "https://drive.google.com/drive/folders/1XHaRWZIEI1u7bd6EjXC-rBs81sOdsqk4?usp=drive_link",
+    "image": "https://drive.google.com/thumbnail?id=1dDTH6iRBIYc9DNCHy4l8_h7MwlR9YHWY&sz=w4000",
+    "gallery": [],
+    "architectureNotes": [],
+    "challenges": [],
+    "keyFeatures": []
+  },
+  {
+    "id": "955999046",
+    "slug": "go-rest-api",
+    "name": "Go REST API",
+    "tagline": "REST API sederhana menggunakan Golang dengan framework Gin",
+    "description": "REST API sederhana menggunakan Golang dengan framework Gin",
+    "visibility": "public",
+    "featured": false,
+    "tools": [
+      "Gin",
+      "Go",
+      "GORM",
+      "PostgreSQL"
+    ],
+    "repo": "https://github.com/mhdalfaz/go-restapi",
+    "image": "https://drive.google.com/thumbnail?id=1diXlVa57YZHZBcMYtOZRYj3ZoXHxjMax&sz=w4000",
+    "gallery": [],
+    "architectureNotes": [],
+    "challenges": [],
+    "keyFeatures": []
+  },
+  {
+    "id": "562151659",
+    "slug": "library-app",
+    "name": "Library App",
+    "tagline": "Sistem pengelolaan peminjaman buku di perpustakaan.",
+    "description": "Sistem pengelolaan peminjaman buku di perpustakaan. \nDemo user: \nemail: admin@example.com\npassword: password",
+    "visibility": "public",
+    "featured": false,
+    "tools": [
+      "Laravel 12",
+      "Filament",
+      "PostgreSQL"
+    ],
+    "homepage": "https://library-sxxgvt.laravel.cloud",
+    "repo": "https://github.com/mhdalfaz/library",
+    "image": "https://drive.google.com/thumbnail?id=1rjn6uQwh9ItAC33EvEPWa7xL_Mn_Af9q&sz=w4000",
+    "gallery": [],
+    "architectureNotes": [],
+    "challenges": [],
+    "keyFeatures": []
+  },
+  {
+    "id": "243567111",
+    "slug": "rekam-medis",
+    "name": "Rekam Medis",
+    "tagline": "Sistem rekam medis sederhana untuk klinik",
+    "description": "Sistem rekam medis sederhana untuk klinik",
+    "visibility": "public",
+    "featured": false,
+    "tools": [
+      "Laravel 12",
+      "Filament",
+      "MySQL"
+    ],
+    "repo": "https://github.com/mhdalfaz/rekam-medis",
+    "image": "https://drive.google.com/thumbnail?id=1qdBQ-DDZx2hYYHG23olWnblkTwhoWIp-&sz=w4000",
+    "gallery": [],
+    "architectureNotes": [],
+    "challenges": [],
+    "keyFeatures": []
+  },
+  {
+    "id": "669283745",
+    "slug": "laravel-travel",
+    "name": "Laravel Travel",
+    "tagline": "Sistem Pemesanan Tiket Bus secara Online.",
+    "description": "Sistem Pemesanan Tiket Bus secara Online.",
+    "visibility": "public",
+    "featured": false,
+    "tools": [
+      "Laravel 10",
+      "MySQL",
+      "Midtrans",
+      "Pusher",
+      "Filament",
+      "Tailwind CSS"
+    ],
+    "repo": "https://github.com/mhdalfaz/laravel-travel",
+    "image": "https://drive.google.com/thumbnail?id=1a4jB3fbfFkiIR3VO6vdj4-djS13V_11N&sz=w2400",
+    "gallery": [],
+    "architectureNotes": [],
+    "challenges": [],
+    "keyFeatures": []
+  },
+  {
+    "id": "674556381",
+    "slug": "pnp-scm",
+    "name": "PNP SCM",
+    "tagline": "Sistem Supply Chain Management Parkland World Indonesia",
+    "description": "Sistem Supply Chain Management Parkland World Indonesia",
+    "visibility": "private",
+    "featured": false,
+    "tools": [
+      "Backend: Laravel, Sqlsrv",
+      "Front End: Nuxt"
+    ],
+    "image": "https://drive.google.com/thumbnail?id=1wzys8SjQGuHiTCHU3M9ioqUPsKkDYAVp&sz=w2400",
+    "gallery": [],
+    "architectureNotes": [],
+    "challenges": [],
+    "keyFeatures": []
+  },
+  {
+    "id": "698734655",
+    "slug": "hoomy-ai",
+    "name": "Hoomy AI",
+    "tagline": "AI Home Designer",
+    "description": "AI Home Designer",
+    "visibility": "private",
+    "featured": false,
+    "tools": [
+      "Laravel",
+      "Redis",
+      "MySQL"
+    ],
+    "homepage": "https://hoomy.ai",
+    "image": "https://drive.google.com/thumbnail?id=1vvks4j83C2Q2dmOkBpPbp_0L60mJQSn0&sz=w2400",
+    "gallery": [],
+    "architectureNotes": [],
+    "challenges": [],
+    "keyFeatures": []
+  },
+  {
+    "id": "253876530",
+    "slug": "sinta-project",
+    "name": "SINTA Project",
+    "tagline": "Aplikasi manajemen pengeluaran kegiatan kabupaten Sumedang.",
+    "description": "Aplikasi manajemen pengeluaran kegiatan kabupaten Sumedang.",
+    "visibility": "private",
+    "featured": false,
+    "tools": [
+      "Backpack",
+      "Laravel 10",
+      "MySQL",
+      "Bootstrap",
+      "JQuery"
+    ],
+    "homepage": "https://sinta.sumedangkab.go.id",
+    "image": "https://drive.google.com/thumbnail?id=1rCUIrEqEdAL_3MPAQbtiQdNMMU9ZtKst&sz=w2400",
+    "gallery": [],
+    "architectureNotes": [],
+    "challenges": [],
+    "keyFeatures": []
+  },
+  {
+    "id": "666323017",
+    "slug": "uji-validitas-dan-reliabilitas",
+    "name": "uji-validitas-dan-reliabilitas",
+    "tagline": "Sistem untuk membuat uji validitas dan reabilitas",
+    "description": "Sistem untuk membuat uji validitas dan reabilitas",
+    "visibility": "public",
+    "featured": false,
+    "tools": [
+      "HTML",
+      "JavaScript",
+      "Bootstrap"
+    ],
+    "homepage": "https://mhdalfaz.github.io/uji-validitas-dan-reliabilitas",
+    "repo": "https://github.com/mhdalfaz/uji-validitas-dan-reliabilitas",
+    "image": "https://drive.google.com/thumbnail?id=168G056ObRwSeF7iOETkN2YKdmQinKW3K&sz=w2400",
+    "gallery": [],
+    "architectureNotes": [],
+    "challenges": [],
+    "keyFeatures": []
+  },
+  {
+    "id": "546380567",
+    "slug": "noiu-event-organizer",
+    "name": "NOIU Event Organizer",
+    "tagline": "Web Company Profile NOIU-EO",
+    "description": "Web Company Profile NOIU-EO",
+    "visibility": "private",
+    "featured": false,
+    "tools": [
+      "Backend: Laravel",
+      "Front End: Next.js (8.18.0), JavaScript, Tevily, CSS"
+    ],
+    "homepage": "https://noiu-eo.com",
+    "image": "https://drive.google.com/thumbnail?id=1MspQ3cu4mHq9w0k4MoZdRjR9IXsSvP2t&sz=w2400",
+    "gallery": [],
+    "architectureNotes": [],
+    "challenges": [],
+    "keyFeatures": []
+  },
+  {
+    "id": "679257556",
+    "slug": "next-note",
+    "name": "next-note",
+    "tagline": "Aplikasi Note sederhana menggunakan Nextjs",
+    "description": "Aplikasi Note sederhana menggunakan Nextjs",
+    "visibility": "public",
+    "featured": false,
+    "tools": [
+      "Next.js (8.19.2)",
+      "TypeScript",
+      "Tailwindcss",
+      "JSON Server"
+    ],
+    "homepage": "https://next-note-mhdalfaz.vercel.app",
+    "repo": "https://github.com/mhdalfaz/next-note",
+    "image": "https://drive.google.com/thumbnail?id=13240fvo7nzi23kSTXTFLG2NwnirryTz6&sz=w2400",
+    "gallery": [],
+    "architectureNotes": [],
+    "challenges": [],
+    "keyFeatures": []
+  },
+  {
+    "id": "735380461",
+    "slug": "gsi-project",
+    "name": "GSI Project",
+    "tagline": "Aplikasi Penggadaian Gadai Express Indonesia",
+    "description": "Aplikasi Penggadaian Gadai Express Indonesia",
+    "visibility": "private",
+    "featured": false,
+    "tools": [
+      "Laravel 8",
+      "PHP",
+      "MySQL",
+      "Bootstrap",
+      "JQuery"
+    ],
+    "homepage": "https://cms.gadaiexpress.id",
+    "image": "https://drive.google.com/thumbnail?id=1p2V6fxtHnKFXN0gxB3ej2n9Dcf00gAnJ&sz=w2400",
+    "gallery": [],
+    "architectureNotes": [],
+    "challenges": [],
+    "keyFeatures": []
+  },
+  {
+    "id": "561660831",
+    "slug": "boses-resto",
+    "name": "boses-resto",
+    "tagline": "Aplikasi restoran dengan javascript pwa",
+    "description": "Aplikasi restoran dengan javascript pwa",
+    "visibility": "public",
+    "featured": false,
+    "tools": [
+      "PWA",
+      "HTML",
+      "JavaScript",
+      "CSS"
+    ],
+    "homepage": "https://mhdalfaz.github.io/boses-resto",
+    "repo": "https://github.com/mhdalfaz/boses-resto",
+    "image": "https://drive.google.com/thumbnail?id=1hmfhWg6Y62iCP_T9ZsewTjef7iD3O7ws&sz=w2400",
+    "gallery": [],
+    "architectureNotes": [],
+    "challenges": [],
+    "keyFeatures": []
+  },
+  {
+    "id": "578866482",
+    "slug": "pwa-app-service",
+    "name": "pwa-app-service",
+    "tagline": "Aplikasi spa service sederhana dengan pwa",
+    "description": "Aplikasi spa service sederhana dengan pwa",
+    "visibility": "public",
+    "featured": false,
+    "tools": [
+      "PWA",
+      "Native PHP",
+      "MySQL"
+    ],
+    "repo": "https://github.com/mhdalfaz/pwa-app-service",
+    "image": "https://drive.google.com/thumbnail?id=1_YMyM8QGRXMkI04FOLiVwNMJ54knUjhl&sz=w2400",
+    "gallery": [],
+    "architectureNotes": [],
+    "challenges": [],
+    "keyFeatures": []
+  },
+  {
+    "id": "579651000",
+    "slug": "java-cd-music",
+    "name": "java-cd-music",
+    "tagline": "Aplikasi manajemen data music menggunakan Java",
+    "description": "Aplikasi manajemen data music menggunakan Java",
+    "visibility": "public",
+    "featured": false,
+    "tools": [
+      "Java",
+      "MySQL"
+    ],
+    "repo": "https://github.com/mhdalfaz/java-cd-music",
+    "image": "https://drive.google.com/thumbnail?id=18a_BLU92tN8VDAKyZ9LsM1zyy6k3tYq8&sz=w2400",
+    "gallery": [],
+    "architectureNotes": [],
+    "challenges": [],
+    "keyFeatures": []
+  },
+  {
+    "id": "665437821",
+    "slug": "balqis-syar-i",
+    "name": "Balqis Syar'i",
+    "tagline": "Sistem pengelolaan penjualan baju gamis dengan Framework Laravel.",
+    "description": "Sistem pengelolaan penjualan baju gamis dengan Framework Laravel.",
+    "visibility": "private",
+    "featured": false,
+    "tools": [
+      "Laravel 8",
+      "Raja Ongkir",
+      "Bootstrap",
+      "MySQL"
+    ],
+    "image": "https://drive.google.com/thumbnail?id=1NxKsWv2Zife-PEs5bKUD5Qnf2ak0oLV2&sz=w2400",
+    "gallery": [],
+    "architectureNotes": [],
+    "challenges": [],
+    "keyFeatures": []
+  },
+  {
+    "id": "876123339",
+    "slug": "karisma-rawat",
+    "name": "Karisma Rawat",
+    "tagline": "Aplikasi rawat rumah sakit karisma subang.",
+    "description": "Aplikasi rawat rumah sakit karisma subang.",
+    "visibility": "private",
+    "featured": false,
+    "tools": [
+      "Laravel 8",
+      "Bootstrap",
+      "MySQL"
+    ],
+    "image": "https://drive.google.com/thumbnail?id=1ksQ-NctTtQwoqntxEfuYvqng-snqn8ZA&sz=w2400",
+    "gallery": [],
+    "architectureNotes": [],
+    "challenges": [],
+    "keyFeatures": []
+  },
+  {
+    "id": "538587338",
+    "slug": "next-ongkir",
+    "name": "next-ongkir",
+    "tagline": "Check harga ongkir menggunakan api raja ongkir.",
+    "description": "Check harga ongkir menggunakan api raja ongkir.",
+    "visibility": "public",
+    "featured": false,
+    "tools": [
+      "Next.js",
+      "JavaScript",
+      "MySQL",
+      "Tailwindcss"
+    ],
+    "repo": "https://github.com/mhdalfaz/next-ongkir",
+    "image": "https://drive.google.com/thumbnail?id=1lI0GnMz-vVpSxD8xS5Deq-tLTrzekSHs&sz=w2400",
+    "gallery": [],
+    "architectureNotes": [],
+    "challenges": [],
+    "keyFeatures": []
+  },
+  {
+    "id": "574727687",
+    "slug": "laravel-cafe",
+    "name": "laravel-cafe",
+    "tagline": "Aplikasi data menu makanan menggunakan Framework Laravel.",
+    "description": "Aplikasi data menu makanan menggunakan Framework Laravel.",
+    "visibility": "public",
+    "featured": false,
+    "tools": [
+      "Laravel 8",
+      "MySQL"
+    ],
+    "repo": "https://github.com/mhdalfaz/laravel-cafe",
+    "image": "https://drive.google.com/thumbnail?id=1D2Q89xUErcgUFSByusnO9i68To0r2hWn&sz=w2400",
+    "gallery": [],
+    "architectureNotes": [],
+    "challenges": [],
+    "keyFeatures": []
+  },
+  {
+    "id": "570374343",
+    "slug": "laravel-note",
+    "name": "laravel-note",
+    "tagline": "Aplikasi note sederhana dengan framework laravel",
+    "description": "Aplikasi note sederhana dengan framework laravel",
+    "visibility": "public",
+    "featured": false,
+    "tools": [
+      "Laravel 8",
+      "Trix editor",
+      "MySQL"
+    ],
+    "repo": "https://github.com/mhdalfaz/laravel-note",
+    "image": "https://drive.google.com/thumbnail?id=1TOJwy2imZJsBDjxwzIvNYJfqFWtiSwcd&sz=w2400",
+    "gallery": [],
+    "architectureNotes": [],
+    "challenges": [],
+    "keyFeatures": []
+  },
+  {
+    "id": "889640091",
+    "slug": "pos-bangunan",
+    "name": "POS Bangunan",
+    "tagline": "Aplikasi Point Of Sale untuk toko keramik dan bangunan.",
+    "description": "Aplikasi Point Of Sale untuk toko keramik dan bangunan.",
+    "visibility": "private",
+    "featured": false,
+    "tools": [
+      "Laravel (8.83.27)",
+      "MySQL",
+      "Bootstrap"
+    ],
+    "image": "https://drive.google.com/thumbnail?id=1FlzqHAIurSS6VwvE6Cy8Q9mDBpI2j3Su&sz=w2400",
+    "gallery": [],
+    "architectureNotes": [],
+    "challenges": [],
+    "keyFeatures": []
+  },
+  {
+    "id": "559212434",
+    "slug": "pwa-kalkulator",
+    "name": "pwa-kalkulator",
+    "tagline": "pwa kalkulator",
+    "description": "pwa kalkulator",
+    "visibility": "public",
+    "featured": false,
+    "tools": [
+      "PWA",
+      "HTML",
+      "Javascript"
+    ],
+    "homepage": "https://mhdalfaz.github.io/pwa-kalkulator",
+    "repo": "https://github.com/mhdalfaz/pwa-kalkulator",
+    "image": "https://drive.google.com/thumbnail?id=1g3Zmkt0jqKVImYyVEV8_lXAyYoBdCBvz&sz=w2400",
+    "gallery": [],
+    "architectureNotes": [],
+    "challenges": [],
+    "keyFeatures": []
+  }
+]

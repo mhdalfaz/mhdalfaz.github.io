@@ -1,0 +1,137 @@
+---
+const year = new Date().getFullYear();
+
+const socials = [
+  { label: 'GitHub', href: 'https://github.com/mhdalfaz', handle: '@mhdalfaz' },
+  {
+    label: 'LinkedIn',
+    href: 'https://www.linkedin.com/in/muhammad-alfaz-74a173208',
+    handle: 'Muhammad Alfaz',
+  },
+  { label: 'Instagram', href: 'https://www.instagram.com/muh_alfaz_', handle: '@muh_alfaz_' },
+];
+---
+
+<footer class="site-footer">
+  <div class="shell">
+    <div class="site-footer__grid">
+      <div class="site-footer__lead">
+        <p class="eyebrow">Let's build something</p>
+        <p class="site-footer__pitch">
+          Have a web or product problem worth solving? I'm open to freelance work
+          and interesting collaborations.
+        </p>
+        <a class="btn btn--solid" href="/contact">Get in touch</a>
+      </div>
+
+      <nav class="site-footer__col" aria-label="Footer">
+        <p class="site-footer__heading">Site</p>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/projects">Projects</a></li>
+          <li><a href="/about">About</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </nav>
+
+      <div class="site-footer__col">
+        <p class="site-footer__heading">Elsewhere</p>
+        <ul>
+          {
+            socials.map((social) => (
+              <li>
+                <a href={social.href} target="_blank" rel="noopener noreferrer">
+                  {social.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+
+    <div class="site-footer__base">
+      <p>&copy; {year} Muhammad Alfaz. Built with Astro.</p>
+      <p class="site-footer__meta">Monochrome by design.</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    position: relative;
+    z-index: 1;
+    margin-block-start: var(--space-8);
+    padding-block: var(--space-7) var(--space-5);
+    border-top: var(--border-hairline);
+    background-color: var(--ink-1);
+  }
+
+  .site-footer__grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1fr;
+    gap: var(--space-6);
+    padding-block-end: var(--space-6);
+  }
+
+  .site-footer__lead {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-4);
+    max-inline-size: 42ch;
+  }
+
+  .site-footer__pitch {
+    font-size: var(--text-base);
+    color: var(--paper-dim);
+  }
+
+  .site-footer__heading {
+    margin-block-end: var(--space-3);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--grey-50);
+  }
+
+  .site-footer__col ul {
+    display: grid;
+    gap: var(--space-2);
+    list-style: none;
+    padding: 0;
+  }
+
+  .site-footer__col a {
+    font-size: var(--text-sm);
+    color: var(--grey-70);
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+
+  .site-footer__col a:hover {
+    color: var(--paper);
+  }
+
+  .site-footer__base {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    justify-content: space-between;
+    padding-block-start: var(--space-5);
+    border-top: var(--border-hairline);
+    font-size: var(--text-xs);
+    color: var(--grey-50);
+  }
+
+  .site-footer__meta {
+    font-family: var(--font-mono);
+  }
+
+  @media (max-width: 760px) {
+    .site-footer__grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-5);
+    }
+  }
+</style>

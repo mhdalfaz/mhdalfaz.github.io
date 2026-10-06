@@ -1,0 +1,321 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { profile, socials, stack } from '../data/profile';
+
+const projects = (await getCollection('projects')).map((entry) => entry.data);
+
+const domains = [...new Set(projects.map((p) => p.domain).filter(Boolean))] as string[];
+const years = projects
+  .map((p) => p.year)
+  .filter((year): year is number => typeof year === 'number');
+
+const stats = [
+  { label: 'Projects', value: String(projects.length) },
+  { label: 'Domains served', value: domains.length > 0 ? String(domains.length) : '4' },
+  { label: 'Technologies', value: String(new Set(projects.flatMap((p) => p.tools)).size) },
+  { label: 'Years shipping', value: years.length > 0 ? String(Math.max(...years) - Math.min(...years) + 1) : 'n/a' },
+];
+---
+
+<BaseLayout title={`About | ${profile.name}`} description={profile.bio}>
+  <section class="section shell">
+    <header class="page-head" data-reveal>
+      <p class="eyebrow">About</p>
+      <h1 class="page-head__title">Hi, I'm Alfaz.</h1>
+      <p class="lede">{profile.bio}</p>
+    </header>
+
+    <dl class="stats">
+      {
+        stats.map((stat, index) => (
+          <div class="stat panel panel--lit" data-reveal style={`--reveal-delay: ${index * 60}ms`}>
+            <dt>{stat.label}</dt>
+            <dd>{stat.value}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </section>
+
+  <section class="section shell shell--narrow">
+    <div class="prose-grid">
+      <div class="prose" data-reveal>
+        <h2>What I do</h2>
+        <p>
+          I'm a web developer based in {profile.location}. Most of my work sits in
+          business software: inventory and point-of-sale, healthcare records,
+          government budgeting, supply chain, and internal tools that people use
+          all day.
+        </p>
+        <p>
+          That kind of software is rarely about flashy interfaces. It's about the
+          form validating correctly, the data staying consistent, the report
+          matching the ledger, and the thing loading fast on a connection that
+          isn't great. I spend most of my effort there.
+        </p>
+
+        <h2>How I work</h2>
+        <p>
+          I like understanding the whole path a request takes: from the route,
+          through validation and authorization, into the database, and back out as
+          something a user can act on. Understanding the layers is what lets me
+          make architecture calls instead of guessing.
+        </p>
+        <p>
+          On client work I work within existing teams, follow the conventions already
+          in the codebase, and leave things documented enough that the next person
+          isn't blocked by me. Most of my project pages here describe my specific
+          contribution rather than claiming the whole system.
+        </p>
+
+        <h2>Outside of work</h2>
+        <p>
+          I follow web development closely, mostly out of curiosity about how newer
+          tools actually work under the hood rather than just what the docs claim.
+          I'm currently focused on TypeScript, Go, and better frontend architecture.
+        </p>
+      </div>
+
+      <aside class="side">
+        <div class="panel side__block" data-reveal>
+          <h2 class="side__title">Details</h2>
+          <dl class="side__list">
+            <div>
+              <dt>Role</dt>
+              <dd>{profile.role}</dd>
+            </div>
+            <div>
+              <dt>Location</dt>
+              <dd>{profile.location}</dd>
+            </div>
+            <div>
+              <dt>Status</dt>
+              <dd>{profile.availability}</dd>
+            </div>
+          </dl>
+        </div>
+
+        <div class="panel side__block" data-reveal>
+          <h2 class="side__title">Find me</h2>
+          <ul class="side__links">
+            {
+              socials.map((social) => (
+                <li>
+                  <a href={social.href} target="_blank" rel="noopener noreferrer">
+                    <span>{social.label}</span>
+                    <span class="side__handle">{social.handle}</span>
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section shell">
+    <div class="section-head" data-reveal>
+      <p class="eyebrow">Toolbox</p>
+      <h2 class="section-heading">Technologies I work with</h2>
+    </div>
+
+    <div class="stack-grid">
+      {
+        stack.map((category, index) => (
+          <div class="stack-card panel panel--lit" data-reveal style={`--reveal-delay: ${index * 50}ms`}>
+            <h3 class="stack-card__title">{category.group}</h3>
+            <ul class="stack-card__list">
+              {category.items.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin-block-end: var(--space-7);
+    max-inline-size: 62ch;
+  }
+
+  .page-head__title {
+    font-size: var(--text-4xl);
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+    gap: var(--space-4);
+  }
+
+  .stat {
+    padding: var(--space-5);
+  }
+
+  .stat dt {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--grey-50);
+  }
+
+  .stat dd {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    font-weight: 600;
+    line-height: 1.1;
+  }
+
+  .prose-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.7fr) minmax(220px, 0.7fr);
+    gap: var(--space-7);
+    align-items: start;
+  }
+
+  .prose {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    max-inline-size: 68ch;
+  }
+
+  .prose h2 {
+    margin-block-start: var(--space-4);
+    font-size: var(--text-xl);
+  }
+
+  .prose p {
+    color: var(--paper-dim);
+  }
+
+  .side {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    position: sticky;
+    inset-block-start: calc(var(--nav-height) + var(--space-4));
+  }
+
+  .side__block {
+    padding: var(--space-5);
+  }
+
+  .side__title {
+    margin-block-end: var(--space-4);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--grey-50);
+  }
+
+  .side__list {
+    display: grid;
+    gap: var(--space-3);
+    margin: 0;
+  }
+
+  .side__list dt {
+    font-size: var(--text-xs);
+    color: var(--grey-50);
+  }
+
+  .side__list dd {
+    margin: 0;
+    font-size: var(--text-sm);
+  }
+
+  .side__links {
+    display: grid;
+    gap: var(--space-1);
+    list-style: none;
+    padding: 0;
+  }
+
+  .side__links a {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding-block: var(--space-2);
+    font-size: var(--text-sm);
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+
+  .side__links a:hover {
+    color: var(--paper);
+  }
+
+  .side__handle {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--grey-50);
+  }
+
+  .section-head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin-block-end: var(--space-6);
+  }
+
+  .stack-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
+    gap: var(--space-4);
+  }
+
+  .stack-card {
+    padding: var(--space-5);
+  }
+
+  .stack-card__title {
+    margin-block-end: var(--space-3);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--grey-50);
+  }
+
+  .stack-card__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    list-style: none;
+    padding: 0;
+  }
+
+  .stack-card__list li {
+    padding: 0.2em 0.6em;
+    border: var(--border-hairline);
+    border-radius: var(--radius-full);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--grey-70);
+  }
+
+  @media (max-width: 860px) {
+    .prose-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .side {
+      position: static;
+    }
+  }
+</style>

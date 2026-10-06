@@ -1,0 +1,92 @@
+name: Deploy portfolio to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  # Allows a manual re-run from the Actions tab.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Publishing happens from main, so anything that lands there is live. The
+# older version branches are never built.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # Runs before the build so a misconfigured Pages source fails in seconds
+      # rather than after a full install and build.
+      - uses: actions/configure-pages@v5
+
+      - name: Install dependencies
+        run: npm ci
+
+      # A stale snapshot means the Sheet was edited without re-running
+      # `npm run data:sync`. This step fetches the live sheet, so it can also
+      # catch a Sheet that is unreachable or unpublished, which is why it must
+      # not block the deploy. The committed snapshot is the real fallback.
+      #
+      # The run string is a block scalar: a bare `|| echo "::warning::..."` on
+      # one line makes GitHub's YAML parser choke on the `::`.
+      - name: Check data snapshot is current
+        run: |
+          if ! npm run data:sync:check; then
+            echo "::warning title=Stale data snapshot::The committed snapshot does not match the Google Sheet, or the sheet is unreachable. Run: npm run data:sync"
+          fi
+
+      - name: Type check
+        run: npm run check
+
+      - name: Build
+        run: npm run build
+        env:
+          PUBLIC_ADSENSE_CLIENT: ${{ vars.PUBLIC_ADSENSE_CLIENT }}
+
+      # Catches broken internal links, missing alt text, duplicate h1s, and any
+      # colour that escapes the monochrome palette.
+      - name: Verify build output
+        run: node scripts/verify-build.mjs
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  # If this job fails with
+  #   Branch "main" is not allowed to deploy to github-pages due to
+  #   environment protection rules
+  # the build is fine and the repository setting is not. GitHub creates the
+  # `github-pages` environment with a deployment branch rule, and once that rule
+  # is set to selected branches it only allows what is listed there. The fix is
+  # one click, in the repo settings rather than in this file:
+  #
+  #   Settings > Environments > github-pages > Deployment branches and tags
+  #     -> either set "All branches", or add `main` as a branch rule
+  #
+  # Also confirm Settings > Pages > Build and deployment > Source is set to
+  # "GitHub Actions". If it is set to "Deploy from a branch" then this workflow
+  # publishes nothing and GitHub serves the checked out files of that branch
+  # instead, which is not a built site at all. This workflow cannot change either
+  # setting.
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

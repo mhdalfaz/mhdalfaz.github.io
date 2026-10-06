@@ -1,0 +1,757 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import type { Project } from '../../lib/project-schema';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('projects');
+  return entries.map((entry) => ({
+    params: { slug: entry.id },
+    props: { project: entry.data },
+  }));
+}
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+
+// Sibling projects for prev/next, so a reader can move through the archive
+// without going back to the index.
+const all = (await getCollection('projects')).map((entry) => entry.data);
+const ordered = [...all].sort((a, b) => a.name.localeCompare(b.name));
+const index = ordered.findIndex((p) => p.slug === project.slug);
+const prev = index > 0 ? ordered[index - 1] : undefined;
+const next = index >= 0 && index < ordered.length - 1 ? ordered[index + 1] : undefined;
+
+/** How much of the deep-dive content is filled in. Drives the completeness hint. */
+const deepSections = [
+  project.role,
+  project.architecture,
+  project.challenges.length > 0,
+  project.keyFeatures.length > 0,
+].filter(Boolean).length;
+
+const links = [
+  project.homepage ? { href: project.homepage, label: 'Live site', primary: true } : null,
+  project.repo ? { href: project.repo, label: 'Source code', primary: false } : null,
+  project.androidDownload ? { href: project.androidDownload, label: 'Android', primary: false } : null,
+  project.iosDownload ? { href: project.iosDownload, label: 'iOS', primary: false } : null,
+].filter((link) => link !== null);
+
+/** Split the multi-line description into paragraphs. */
+const paragraphs = project.description
+  .split(/\n{2,}/)
+  .map((block) => block.trim())
+  .filter(Boolean);
+---
+
+<BaseLayout
+  title={`${project.name} | Muhammad Alfaz`}
+  description={project.tagline ?? project.name}
+>
+  <article class="project">
+    <!-- Header -->
+    <header class="project-head">
+      <div class="shell">
+        <nav class="crumbs" aria-label="Breadcrumb">
+          <a href="/projects">Projects</a>
+          <span aria-hidden="true">/</span>
+          <span aria-current="page">{project.name}</span>
+        </nav>
+
+        <div class="project-head__grid">
+          <div class="project-head__main">
+            <div class="project-head__meta">
+              <span class:list={['badge-lg', project.visibility === 'public' ? 'badge-lg--open' : 'badge-lg--closed']}>
+                {project.visibility === 'public' ? 'Open source' : 'Client work'}
+              </span>
+              {project.domain && <span class="badge-lg badge-lg--plain">{project.domain}</span>}
+              {project.year && <span class="badge-lg badge-lg--plain">{project.year}</span>}
+              {project.status && <span class="badge-lg badge-lg--plain">{project.status}</span>}
+            </div>
+
+            <h1 class="project-head__title">{project.name}</h1>
+            {project.tagline && <p class="project-head__tagline">{project.tagline}</p>}
+
+            {
+              links.length > 0 && (
+                <div class="project-head__actions">
+                  {links.map((link) => (
+                    <a
+                      class:list={['btn', { 'btn--solid': link.primary }]}
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {link.label}
+                      <svg class="btn__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                        <path
+                          d="M6 3h7v7M13 3 3.5 12.5"
+                          stroke="currentColor"
+                          stroke-width="1.5"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </a>
+                  ))}
+                </div>
+              )
+            }
+          </div>
+
+          <!-- Facts sidebar -->
+          <dl class="facts panel panel--lit">
+            {
+              project.role && (
+                <div class="facts__row facts__row--wide">
+                  <dt>My role</dt>
+                  <dd>{project.role}</dd>
+                </div>
+              )
+            }
+            {
+              project.team && (
+                <div class="facts__row">
+                  <dt>Team</dt>
+                  <dd>{project.team}</dd>
+                </div>
+              )
+            }
+            {
+              project.timeline && (
+                <div class="facts__row">
+                  <dt>Timeline</dt>
+                  <dd>{project.timeline}</dd>
+                </div>
+              )
+            }
+            {
+              project.domain && (
+                <div class="facts__row">
+                  <dt>Domain</dt>
+                  <dd>{project.domain}</dd>
+                </div>
+              )
+            }
+            {
+              project.year && (
+                <div class="facts__row">
+                  <dt>Year</dt>
+                  <dd>{project.year}</dd>
+                </div>
+              )
+            }
+            <div class="facts__row">
+              <dt>Stack</dt>
+              <dd>{project.tools.length} technologies</dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+    </header>
+
+    <!-- Hero screenshot -->
+    {
+      project.image && (
+        <div class="shell">
+          <figure class="shot" data-reveal>
+            <img src={project.image} alt={`${project.name} interface`} loading="eager" decoding="async" />
+          </figure>
+        </div>
+      )
+    }
+
+    <!-- Body -->
+    <div class="shell project-body">
+      <div class="project-body__main">
+        {
+          paragraphs.length > 0 && (
+            <section class="block" data-reveal aria-labelledby="overview-heading">
+              <p class="eyebrow">01 / Overview</p>
+              <h2 class="block__title" id="overview-heading">What it is</h2>
+              <div class="prose">
+                {paragraphs.map((paragraph) => (
+                  <p>{paragraph}</p>
+                ))}
+              </div>
+            </section>
+          )
+        }
+
+        {
+          project.keyFeatures.length > 0 && (
+            <section class="block" data-reveal aria-labelledby="features-heading">
+              <p class="eyebrow">02 / Capabilities</p>
+              <h2 class="block__title" id="features-heading">Key features</h2>
+              <ul class="check-list">
+                {project.keyFeatures.map((feature) => (
+                  <li>
+                    <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                      <path
+                        d="m3.5 8.5 3 3 6-6.5"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                    {feature}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )
+        }
+
+        {
+          project.architecture && (
+            <section class="block" data-reveal aria-labelledby="architecture-heading">
+              <p class="eyebrow">03 / Architecture</p>
+              <h2 class="block__title" id="architecture-heading">How it's built</h2>
+              <div class="prose">
+                {project.architecture
+                  .split(/\n{2,}/)
+                  .map((paragraph) => paragraph.trim())
+                  .filter(Boolean)
+                  .map((paragraph) => (
+                    <p>{paragraph}</p>
+                  ))}
+              </div>
+
+              {project.architectureNotes.length > 0 && (
+                <ul class="note-list">
+                  {project.architectureNotes.map((note) => (
+                    <li>{note}</li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          )
+        }
+
+        {
+          project.challenges.length > 0 && (
+            <section class="block" data-reveal aria-labelledby="challenges-heading">
+              <p class="eyebrow">04 / Engineering</p>
+              <h2 class="block__title" id="challenges-heading">Challenges &amp; solutions</h2>
+              <ol class="challenge-list">
+                {project.challenges.map((challenge, index) => (
+                  <li class="challenge">
+                    <span class="challenge__num">{String(index + 1).padStart(2, '0')}</span>
+                    <p>{challenge}</p>
+                  </li>
+                ))}
+              </ol>
+            </section>
+          )
+        }
+
+        {
+          project.demoCredentials && (
+            <section class="block" data-reveal aria-labelledby="demo-heading">
+              <p class="eyebrow">05 / Try it</p>
+              <h2 class="block__title" id="demo-heading">Demo credentials</h2>
+              <pre class="demo"><code>{project.demoCredentials}</code></pre>
+            </section>
+          )
+        }
+      </div>
+
+      <!-- Sidebar -->
+      <aside class="project-body__aside">
+        <div class="aside-block panel">
+          <h2 class="aside-block__title">Stack</h2>
+          <ul class="tag-list">
+            {project.tools.map((tool) => (
+              <li class="tag">{tool}</li>
+            ))}
+          </ul>
+        </div>
+
+        {project.role && (
+          <div class="aside-block panel">
+            <h2 class="aside-block__title">Contribution</h2>
+            <p class="aside-block__text">{project.role}</p>
+          </div>
+        )}
+      </aside>
+    </div>
+
+    <!-- Gallery -->
+    {
+      project.gallery.length > 0 && (
+        <section class="section shell" aria-labelledby="gallery-heading">
+          <h2 class="section-heading" id="gallery-heading" data-reveal>
+            Gallery
+          </h2>
+          <div class="gallery">
+            {project.gallery.map((image) => (
+              <figure class="gallery__item" data-reveal>
+                <img src={image} alt={`${project.name} screenshot`} loading="lazy" decoding="async" />
+              </figure>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    <!-- Not yet written -->
+    {
+      deepSections < 4 && (
+        <section class="shell">
+          <p class="todo-note">
+            This write-up is still being filled in: the sheet has
+            {' '}
+            {4 - deepSections} of the deep-dive fields missing. Want the full version?
+            {' '}
+            <a href="/contact">Ask me about it.</a>
+          </p>
+        </section>
+      )
+    }
+
+    <!-- Prev / next -->
+    {
+      (prev || next) && (
+        <nav class="pager shell" aria-label="Project navigation">
+          {prev ? (
+            <a class="pager__link" href={`/projects/${prev.slug}`}>
+              <span class="pager__label">← Previous</span>
+              <span class="pager__name">{prev.name}</span>
+            </a>
+          ) : (
+            <span class="pager__link pager__link--empty" />
+          )}
+          {next && (
+            <a class="pager__link pager__link--next" href={`/projects/${next.slug}`}>
+              <span class="pager__label">Next →</span>
+              <span class="pager__name">{next.name}</span>
+            </a>
+          )}
+        </nav>
+      )
+    }
+
+    <!-- More from the archive -->
+    {
+      all.filter((p) => p.slug !== project.slug).length > 0 && (
+        <section class="section shell" aria-labelledby="more-heading">
+          <div class="more-head" data-reveal>
+            <h2 class="section-heading" id="more-heading">
+              More projects
+            </h2>
+            <a class="btn btn--ghost" href="/projects">See all →</a>
+          </div>
+          <div class="more-grid">
+            {all
+              .filter((p) => p.slug !== project.slug)
+              .slice(0, 3)
+              .map((p, i) => (
+                <ProjectCard project={p} index={i} />
+              ))}
+          </div>
+        </section>
+      )
+    }
+  </article>
+</BaseLayout>
+
+<style>
+  /* --- header ------------------------------------------------------------- */
+
+  .project-head {
+    padding-block: var(--space-6) var(--space-6);
+  }
+
+  .crumbs {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-block-end: var(--space-5);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--grey-50);
+  }
+
+  .crumbs a {
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+
+  .crumbs a:hover {
+    color: var(--paper);
+  }
+
+  .project-head__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(240px, 0.75fr);
+    gap: var(--space-6);
+    align-items: start;
+  }
+
+  .project-head__main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    align-items: flex-start;
+  }
+
+  .project-head__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .badge-lg {
+    display: inline-flex;
+    padding: 0.3em 0.8em;
+    border-radius: var(--radius-full);
+    background-color: var(--paper);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+
+  .badge-lg--open,
+  .badge-lg--closed {
+    background-color: var(--paper);
+  }
+
+  .badge-lg--plain {
+    background-color: transparent;
+    border: var(--border-hairline);
+    color: var(--grey-70);
+  }
+
+  .project-head__title {
+    font-size: var(--text-4xl);
+  }
+
+  .project-head__tagline {
+    max-inline-size: 54ch;
+    font-size: var(--text-lg);
+    color: var(--paper-dim);
+  }
+
+  .project-head__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  /* --- facts -------------------------------------------------------------- */
+
+  .facts {
+    padding: var(--space-5);
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .facts__row {
+    display: grid;
+    gap: var(--space-1);
+  }
+
+  .facts__row dt {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--grey-50);
+  }
+
+  .facts__row dd {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--grey-90);
+  }
+
+  .facts__row--wide dd {
+    color: var(--paper);
+  }
+
+  /* --- screenshot --------------------------------------------------------- */
+
+  .shot {
+    margin-block-start: var(--space-5);
+    border: var(--border-hairline);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background-color: var(--ink-2);
+  }
+
+  .shot img {
+    inline-size: 100%;
+    /* Contain rather than cover: UI screenshots must not be cropped. */
+    max-block-size: 70vh;
+    object-fit: contain;
+    filter: grayscale(1) contrast(1.04);
+  }
+
+  /* --- body --------------------------------------------------------------- */
+
+  .project-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(220px, 0.65fr);
+    gap: var(--space-7);
+    padding-block: var(--space-7);
+  }
+
+  .project-body__main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-7);
+    min-inline-size: 0;
+  }
+
+  .block {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .block__title {
+    font-size: var(--text-2xl);
+  }
+
+  .prose {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    max-inline-size: 68ch;
+    color: var(--paper-dim);
+  }
+
+  .check-list {
+    display: grid;
+    gap: var(--space-3);
+    list-style: none;
+    padding: 0;
+  }
+
+  .check-list li {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-3);
+    align-items: start;
+    color: var(--paper-dim);
+  }
+
+  .check-list svg {
+    inline-size: 16px;
+    block-size: 16px;
+    margin-block-start: 0.35em;
+    color: var(--paper);
+  }
+
+  .note-list {
+    display: grid;
+    gap: var(--space-2);
+    list-style: none;
+    padding: var(--space-4) var(--space-5);
+    border-inline-start: 2px solid var(--grey-30);
+    background-color: var(--surface-card);
+    border-radius: 0 var(--radius) var(--radius) 0;
+  }
+
+  .note-list li {
+    font-size: var(--text-sm);
+    color: var(--paper-dim);
+  }
+
+  .challenge-list {
+    display: grid;
+    gap: var(--space-3);
+    list-style: none;
+    padding: 0;
+  }
+
+  .challenge {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-4);
+    align-items: start;
+    padding: var(--space-4);
+    border: var(--border-hairline);
+    border-radius: var(--radius);
+    background-color: var(--surface-card);
+    transition: border-color var(--duration-base) var(--ease-out);
+  }
+
+  .challenge:hover {
+    border-color: var(--grey-30);
+  }
+
+  .challenge__num {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--grey-50);
+    padding-block-start: 0.2em;
+  }
+
+  .challenge p {
+    color: var(--paper-dim);
+  }
+
+  .demo {
+    padding: var(--space-4) var(--space-5);
+    border: var(--border-hairline);
+    border-radius: var(--radius);
+    background-color: var(--ink-2);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--grey-90);
+    overflow-x: auto;
+    white-space: pre-wrap;
+  }
+
+  /* --- sidebar ------------------------------------------------------------ */
+
+  .project-body__aside {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    position: sticky;
+    inset-block-start: calc(var(--nav-height) + var(--space-4));
+    align-self: start;
+  }
+
+  .aside-block {
+    padding: var(--space-5);
+  }
+
+  .aside-block__title {
+    margin-block-end: var(--space-3);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--grey-50);
+  }
+
+  .aside-block__text {
+    font-size: var(--text-sm);
+    color: var(--paper-dim);
+  }
+
+  /* --- gallery / pager / more --------------------------------------------- */
+
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+    gap: var(--space-4);
+    margin-block-start: var(--space-5);
+  }
+
+  .gallery__item {
+    border: var(--border-hairline);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background-color: var(--ink-2);
+  }
+
+  .gallery__item img {
+    inline-size: 100%;
+    filter: grayscale(1);
+  }
+
+  .todo-note {
+    padding: var(--space-4) var(--space-5);
+    border: var(--border-hairline);
+    border-radius: var(--radius);
+    background-color: var(--surface-card);
+    font-size: var(--text-sm);
+    color: var(--grey-70);
+  }
+
+  .todo-note a {
+    color: var(--paper);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .pager {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+    padding-block: var(--space-6);
+    border-top: var(--border-hairline);
+  }
+
+  .pager__link {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: var(--space-4);
+    border: var(--border-hairline);
+    border-radius: var(--radius);
+    transition:
+      border-color var(--duration-base) var(--ease-out),
+      background-color var(--duration-base) var(--ease-out);
+  }
+
+  .pager__link:hover {
+    border-color: var(--grey-30);
+    background-color: var(--surface-subtle);
+  }
+
+  .pager__link--next {
+    text-align: end;
+  }
+
+  .pager__label {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--grey-50);
+  }
+
+  .pager__name {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--text-base);
+  }
+
+  .more-head {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-block-end: var(--space-5);
+  }
+
+  .more-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+    gap: var(--space-5);
+  }
+
+  /* --- responsive --------------------------------------------------------- */
+
+  @media (max-width: 900px) {
+    .project-head__grid,
+    .project-body {
+      grid-template-columns: 1fr;
+    }
+
+    .project-body__aside {
+      position: static;
+    }
+  }
+
+  @media (max-width: 620px) {
+    .pager {
+      grid-template-columns: 1fr;
+    }
+
+    .more-head {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>
